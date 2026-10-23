@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /yonetim
+Disallow: /panel
+Disallow: /login
+Disallow: /404.html
+
+Sitemap: https://risebunny.vercel.app/sitemap.xml

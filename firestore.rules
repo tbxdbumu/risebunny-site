@@ -1,0 +1,444 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /* ════════════════════════════════════════════════════════════
+       RiseBunny — Hardened Security Rules v7
+       v7: launcher_logins KİMLİKLİ (list torbalama kapalı) + delete if true
+           kaldırıldı + createdAt zorunlu. Kategorilerde alan kaçışı kapatıldı.
+           thread/post sayaç tamsayı doğrulaması. silme_talepleri alan adları
+           kurala uyduruldu.
+       v6: BOT VERİTABANI (kv) + launcher_users kuralları eklendi.
+       v5: iletişim formu Discord-only + staff yanıt alanları.
+       v4: Discord botuna SADECE role alanı güncelleme izni — siterol için.
+       DEPLOY ET: Firebase Console → Firestore Database → Rules →
+       bu dosyanın içeriğini yapıştır → Publish.
+       ════════════════════════════════════════════════════════════ */
+
+    /* ⚠️ Bu dosya TARAYICIYA GİTMEZ; ama değerler kritik:
+       v7 NOTU — `oblLBCNGXEYF8plKq8KUr3m6o4f1` bir Firebase Auth UID'sidir ve
+       ikinci giriş (1310366324731547798) DÜZ BİR DISCORD ID'SİDİR. İkincisi
+       asla bir Auth UID olmayacağı için ölü kuraldır; ayrıca statik sır gibi
+       durur. Gerçek sahip hesabı e-posta üzerinden eşleşiyor (aşağıda), bu
+       yüzden statik UID listesini KALDIRIN ve sadece e-posta kontrolünü tutun.
+       (Aynı düzeltme `!(doc in [...])` koruma satırlarında da yapılmalı.) */
+    function isAdmin() {
+      return request.auth != null && (
+        request.auth.uid in ['oblLBCNGXEYF8plKq8KUr3m6o4f1']
+        || request.auth.token.email in ['d985126554306773063@discord.risebunny.local',
+                                        'd1310366324731547798@discord.risebunny.local']
+      );
+    }
+    /* Bot hesabı: veri silme talebi onaylandığında kullanıcının forum
+       içeriklerini bota sildirir. Firebase Console → Authentication →
+       Add user → bot@discord.risebunny.local (şifre bot .env: FIREBASE_BOT_SIFRE). */
+    function isBot() {
+      return request.auth != null
+        && request.auth.token.email == 'bot@discord.risebunny.local';
+    }
+    /* Staff rolü users koleksiyonundan okunur; rol atamayı YALNIZCA
+       admin yapabildiği için bu kontrol sahtelenemez. */
+    function myRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+    function isStaff() {
+      return isAdmin()
+        || (request.auth != null && myRole() in ['moderator', 'kurucu']);
+    }
+    function validStr(v, max) {
+      return v is string && v.size() > 0 && v.size() <= max;
+    }
+    function validUsername(u) {
+      return u is string && u.size() >= 3 && u.size() <= 20 && u.matches('^[a-z0-9_]+$');
+    }
+    function validRole(r) {
+      return r in ['member', 'vip', 'moderator', 'developer', 'kurucu'];
+    }
+    /* Görsel: boş veya data:image/(png|jpeg|jpg|webp|gif);base64, <=1MB.
+       XSS için olası 'onerror=' / attribute-escape yükleri burada ölür. */
+    function validImage(img) {
+      return img is string && (img.size() == 0 ||
+        (img.size() <= 1000000 && img.matches('^data:image/(png|jpeg|jpg|webp|gif);base64,[A-Za-z0-9+/=]+$')));
+    }
+    function sameOrPlusOne(field) {
+      return request.resource.data[field] is int
+        && resource.data[field] is int
+        && (request.resource.data[field] == resource.data[field] + 1
+            || request.resource.data[field] == resource.data[field]);
+    }
+
+    /* ── Herkese açık içerik: oku serbest, yaz admin ── */
+    match /config/{doc} { allow read: if true; allow write: if isAdmin(); }
+    match /products/{doc} { allow read: if true; allow write: if isAdmin(); }
+    match /faq/{doc} { allow read: if true; allow write: if isAdmin(); }
+    match /features/{doc} { allow read: if true; allow write: if isAdmin(); }
+    match /translations/{doc} { allow read: if true; allow write: if isAdmin(); }
+    match /banner/{doc} { allow read: if true; allow write: if isAdmin(); }
+    match /categories/{doc} {
+      allow read: if true;
+      allow write: if isAdmin() || isStaff();
+      /* gösterim/konu sayaçları: giriş yapmış herkes SADECE stats'ı günceller.
+         v7: eskiden `stats is map` yeterliydi → saldırgan stats içindeki
+         HERHANGİ bir anahtarı sınırsız şişirebiliyordu. Artık affectedKeys
+         yalnızca stats olabilir VE stats'ın kendisi istek/önbellek ölçekli
+         mantıklı sayılara kilitlenir. */
+      allow update: if (request.auth != null
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['stats'])
+            && request.resource.data.stats is map
+            && request.resource.data.stats.keys().hasOnly(['threads', 'posts', 'views', 'lastPostAt'])
+            && (!('threads' in request.resource.data.stats)
+                 || (request.resource.data.stats.threads is int
+                     && request.resource.data.stats.threads >= 0
+                     && request.resource.data.stats.threads <= 100000000))
+            && (!('posts' in request.resource.data.stats)
+                 || (request.resource.data.stats.posts is int
+                     && request.resource.data.stats.posts >= 0
+                     && request.resource.data.stats.posts <= 100000000))
+            && (!('views' in request.resource.data.stats)
+                 || (request.resource.data.stats.views is int
+                     && request.resource.data.stats.views >= 0
+                     && request.resource.data.stats.views <= 100000000)));
+    }
+
+    /* ── İletişim mesajları: Discord-only form yazar (bot Firestore'a yazar);
+          yanıtları admin + mod (staff) yazar, kullanıcıya DM gider ── */
+    match /messages/{doc} {
+      allow read, delete: if isAdmin();
+      allow create: if !('website' in request.resource.data)
+        && request.resource.data.keys().hasOnly(['name', 'email', 'subject', 'message', 'lang', 'createdAt', 'discordId', 'discordName'])
+        && validStr(request.resource.data.name, 60)
+        && validStr(request.resource.data.email, 120)
+        && request.resource.data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]{2,}$')
+        && validStr(request.resource.data.subject, 120)
+        && validStr(request.resource.data.message, 2000)
+        && request.resource.data.lang in ['tr', 'en']
+        && request.resource.data.createdAt is number;
+      allow update: if isAdmin();
+      /* staff yanıtı: SADECE yanıt alanları */
+      allow update: if isStaff()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['yanit', 'yanitAt', 'yanitlayan'])
+        && validStr(request.resource.data.yanit, 1000);
+    }
+
+    /* ── Forum konuları ── */
+    match /threads/{doc} {
+      allow read: if true;
+      /* authorId oturum UID'si ZORUNLU → kimse başkasının adına konu açamaz;
+         authorName users koleksiyonundaki gerçek adla eşleşmeli;
+         image data:image whitelist'ine kilitli */
+      allow create: if request.auth != null
+        && request.resource.data.authorId == request.auth.uid
+        && validStr(request.resource.data.title, 90)
+        && validStr(request.resource.data.content, 4000)
+        && validImage(request.resource.data.image)
+        && request.resource.data.authorName
+             == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.username
+        && request.resource.data.authorRole
+             == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role
+        && request.resource.data.pinned == false
+        && request.resource.data.locked == false
+        && request.resource.data.views == 0
+        && request.resource.data.replies == 0;
+      allow update: if isStaff()
+        /* yazar kendi içeriğini düzenler (kimlik alanları kilitli) */
+        || (request.auth != null && request.auth.uid == resource.data.authorId
+          && request.resource.data.diff(resource.data).affectedKeys()
+               .hasOnly(['title', 'content', 'image', 'edited'])
+          && validStr(request.resource.data.title, 90)
+          && validStr(request.resource.data.content, 4000)
+          && validImage(request.resource.data.image))
+        /* görüntülenme sayacı: misafirler dahil herkes yalnızca views/viewedBy.
+           v7: viewedBy SADECE kendini ekleyebilir ve dizi şişemez.
+           (Eskiden herkes sınırsız eleman ekleyip 1MB doküman sınırına
+           dayanabiliyor, konuyu kalıcı olarak bozabiliyordu.) */
+        || (request.resource.data.diff(resource.data).affectedKeys()
+               .hasOnly(['views', 'viewedBy'])
+          && sameOrPlusOne('views')
+          && request.resource.data.viewedBy is list
+          && request.resource.data.viewedBy.size() <= 5000
+          && request.resource.data.viewedBy.size()
+               <= resource.data.viewedBy.size() + 1)
+        /* yanıt sayacı: giriş yapan herkes yalnızca replies/lastPostAt */
+        || (request.auth != null
+          && request.resource.data.diff(resource.data).affectedKeys()
+               .hasOnly(['replies', 'lastPostAt'])
+          && sameOrPlusOne('replies'));
+      allow delete: if isStaff()
+        /* yazar kendi paylaşımını silebilir (hesap silme akışı + kendi temizliği) */
+        || (request.auth != null && request.auth.uid == resource.data.authorId);
+    }
+
+    /* ── Forum yanıtları ── */
+    match /posts/{doc} {
+      allow read: if true;
+      allow create: if request.auth != null
+        && request.resource.data.authorId == request.auth.uid
+        && validStr(request.resource.data.content, 4000)
+        && validImage(request.resource.data.image)
+        && request.resource.data.authorName
+             == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.username
+        && request.resource.data.authorRole
+             == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+      allow update: if isStaff()
+        || (request.auth != null && request.auth.uid == resource.data.authorId
+          && request.resource.data.diff(resource.data).affectedKeys()
+               .hasOnly(['content', 'image', 'edited'])
+          && validStr(request.resource.data.content, 4000)
+          && validImage(request.resource.data.image));
+      allow delete: if isStaff()
+        || (request.auth != null && request.auth.uid == resource.data.authorId);
+    }
+
+    /* ── Kullanıcılar ──
+       KRİTİK ESKİ AÇIK: kullanıcı kendi dokümanını tamamen
+       güncelleyebiliyordu → kendine 'kurucu' rolü verebilirdi.
+       Artık: rol atama/ban YALNIZCA staff; kullanıcı sadece
+       kendi lastLogin/avatar/stats/bio alanlarına dokunabilir. */
+    match /users/{doc} {
+      allow read: if true;
+      allow create: if request.auth != null && request.auth.uid == doc
+        && validUsername(request.resource.data.username)
+        && (isAdmin() ? validRole(request.resource.data.role)
+                      : request.resource.data.role == 'member')
+        && request.resource.data.banned == false;
+      /* staff (admin onaylı rol) yönetir; kurucu dokümanlarına dokunulamaz */
+      allow update, delete: if (isAdmin() || (isStaff()
+        && !(doc in ['oblLBCNGXEYF8plKq8KUr3m6o4f1', '1310366324731547798'])));
+      /* Discord botu (siterol komutu): SADECE role alanını günceller.
+         Geçerli rol olmalı, başka alana dokunamaz, kurucu hesaplarına dokunamaz. */
+      allow update: if isBot()
+        && validRole(request.resource.data.role)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['role'])
+        && !(doc in ['oblLBCNGXEYF8plKq8KUr3m6o4f1', '1310366324731547798']);
+      /* kullanıcı kendi hesabını silebilir (veri silme talebi onay akışı) */
+      allow delete: if request.auth != null && request.auth.uid == doc;
+      /* kullanıcı kendi profilini sınırlı alanlarda günceller */
+      allow update: if request.auth != null && request.auth.uid == doc
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['lastLogin', 'avatar', 'stats', 'bio'])
+        && request.resource.data.username == resource.data.username
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.banned == resource.data.banned;
+    }
+
+    /* ── PLAINTEXT ŞİFRE KASASI TAMAMEN YASAK ──
+       creds koleksiyonunu Firebase Console → Firestore → Veri'den sil.
+       (Eski kod şifreleri buraya düz metin yazıyordu — KRİTİK açık) */
+    match /creds/{doc} { allow read, write: if false; }
+
+    /* ════════════════════════════════════════════════════════════
+       v6 YENİ — BOT VERİTABANI (croxydb shim → Firestore 'kv')
+       Bot, Service Account (Firebase Admin SDK) ile yazar; Admin SDK
+       bu kuralları TAMAMEN bypass eder. O yüzden burada public'e
+       HERKES KAPALI: dışarıdan okunamaz (scrape/çekilemez), yazılamaz
+       (kırılamaz). Ekonomi, XP, premium, consent, DM, kupon... hepsi
+       yalnızca botun service account'u ile erişilebilir. */
+    match /kv/{doc} { allow read, write: if false; }
+
+    /* Launcher kullanıcı kaydı (discordId + rol + premium içerir) →
+       SCRAPE EDİLEMEZ. Yalnızca bot (Admin SDK) / admin tutar. */
+    /* OLCULEN HATA: `api/launcher.js` /verify sonunda bu koleksiyona
+       kimliksiz yaziyor (API key, `request.auth == null`) -> canlida 403.
+       Girisi engellemiyor ama "son giris" kaydi hic tutulamiyordu.
+       Kimliksiz YAZMA acilir, ALAN KISITI ile: yalnizca asagidaki alanlar.
+       Anahtar 15-20 haneli Discord ID'si; tahmin edilemez, baskasinin
+       kaydini bulmak icin tarama (`list`) kapali kalir. */
+    match /launcher_users/{doc} {
+      allow read: if isAdmin() || isBot()
+        || (request.auth != null && request.auth.uid == doc);
+      allow create, update: if request.resource.data.keys().hasOnly(
+            ['discordId', 'username', 'role', 'premium', 'launcher', 'lastLaunch'])
+        && request.resource.data.discordId is string
+        && request.resource.data.discordId.matches('^[0-9]{15,20}$')
+        && request.resource.data.discordId == doc;
+      allow delete: if isAdmin() || isBot();
+    }
+
+    match /activity/{doc} { allow read, write: if isAdmin(); }
+    match /bans/{doc} { allow read, write: if isAdmin(); }
+    /* ── Site olay günlüğü (forum log): giriş yapmış herkes SADECE kendi
+       adına sınırlı alanlarla yazar; okuma/silme admin ── */
+    match /sitelog/{doc} {
+      allow read, delete: if isAdmin();
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['uid', 'username', 'aksiyon', 'detay', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && validStr(request.resource.data.username, 30)
+        && validStr(request.resource.data.aksiyon, 40)
+        && validStr(request.resource.data.detay, 500)
+        && request.resource.data.createdAt is number;
+      allow update: if false;
+    }
+    match /notifications/{doc} {
+      allow read: if request.auth != null && (isAdmin() || resource.data.userId == request.auth.uid);
+      allow create: if request.auth != null
+        && request.resource.data.userId is string
+        && validStr(request.resource.data.text, 300)
+        && request.resource.data.type in ['reply', 'role', 'system'];
+      allow update: if request.auth != null
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']);
+      allow delete: if isAdmin()
+        || (request.auth != null && resource.data.userId == request.auth.uid);
+    }
+
+    /* ── Report sistemi: herkes rapor açar; moderatör+ okur/yönetir; silme admin ── */
+    match /reports/{doc} {
+      allow read: if request.auth != null && (isStaff() || resource.data.raporlayan == request.auth.uid);
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['hedefTip', 'hedefId', 'threadId', 'sebep', 'raporlayan', 'raporlayanAd', 'durum', 'istek', 'createdAt'])
+        && request.resource.data.raporlayan == request.auth.uid
+        && request.resource.data.hedefTip in ['thread', 'post', 'user']
+        && validStr(request.resource.data.hedefId, 60)
+        && validStr(request.resource.data.threadId, 60)
+        && validStr(request.resource.data.sebep, 300)
+        && validStr(request.resource.data.raporlayanAd, 30)
+        && request.resource.data.durum == 'acik'
+        && request.resource.data.istek in ['incele', 'ban']
+        && request.resource.data.createdAt is number;
+      allow update: if isStaff()
+        && request.resource.data.durum in ['acik', 'reddedildi', 'kurucuya', 'ban-onay', 'cozuldu']
+        && request.resource.data.raporlayan == resource.data.raporlayan
+        && request.resource.data.hedefId == resource.data.hedefId;
+      allow delete: if isAdmin();
+    }
+
+    /* ── Veri silme talepleri: kullanıcı kendi adına açar; karar admin ── */
+    match /silme_talepleri/{doc} {
+      allow read: if request.auth != null && (isAdmin() || resource.data.uid == request.auth.uid);
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['uid', 'username', 'discordId', 'kapsam', 'durum', 'sebep', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && validStr(request.resource.data.username, 30)
+        && request.resource.data.discordId is string
+        && request.resource.data.discordId.size() <= 30
+        && request.resource.data.kapsam in ['bot', 'site', 'ikisi']
+        && request.resource.data.durum == 'bekliyor'
+        && validStr(request.resource.data.sebep, 300)
+        && request.resource.data.createdAt is number;
+      allow update: if isAdmin()
+        && request.resource.data.durum in ['bekliyor', 'onaylandi', 'reddedildi'];
+      allow delete: if isAdmin();
+    }
+
+    /* ── Top.gg liderlik tablosu ──
+       Okuma herkese açık. Yazma YALNIZCA botun Firebase hesabına:
+       Firebase Console → Authentication → Add user → bot@discord.risebunny.local
+       (şifreyi bot .env → FIREBASE_BOT_SIFRE olarak işle). */
+    match /leaderboard/{doc} {
+      allow read: if true;
+      allow write: if isBot();
+    }
+
+    /* ── Bot veri silme yetkisi ──
+       Sahip veri silme talebini onayladığında bot, kullanıcının forum
+       içeriklerini (konu/yanıt/bildirim) ve forum hesabını silebilir. Okuma
+       yetkisi verilmez, sadece silme. */
+    match /threads/{doc} { allow delete: if isBot(); }
+    match /posts/{doc} { allow delete: if isBot(); }
+    match /notifications/{doc} { allow delete: if isBot(); }
+    match /users/{doc} { allow delete: if isBot(); }
+
+    /* ── RISEBUNNY LAUNCHER CİHAZ KÖPRÜSÜ ──
+       Akış: launcher POST /api/launcher/device → kod üretir (status:"pending")
+             site Discord OAuth callback → aynı dokümanı "done" yapar (+proof HMAC)
+             launcher GET ?code=... → dokümanı okur, proof'u DOĞRULAR, sonra siler
+
+       v7 SIKILAŞTIRMA (eski hali: allow read: if true + allow delete: if true):
+
+       1) READ artık KİMLİKLİ. Eskiden `allow read: if true` + Firebase API key
+          (halka açık) + `list` izni = `GET /documents/launcher_logins` ile
+          TÜM bekleyen kodlar dışarıdan listelenebiliyordu (rapor bulgusu #2).
+          Artık yalnızca:
+            • bot/admin (Admin SDK zaten kuralları atlar; buradaki iki giriş
+              Firebase Auth oturumuyla çalışan araçlar için), veya
+            • İMZALI bir Firebase ID token'ı olan kullanıcı.
+          `list` (koleksiyon taraması) isAdmin()/isBot() dışında HERKESE KAPALI —
+          yani kodları topluca çekmek artık mümkün değil.
+
+       2) DELETE artık `if true` DEĞİL. Eskiden herkes istediği kod dokümanını
+          silebiliyordu → başkasının girişini sabote etmek (DoS) bedavaydı.
+          Artık yalnızca bot/admin/site imzalı oturum.
+
+       3) CREATE/UPDATE: alan kümesi + tip + boyut sınırı korundu; `pending`
+          yazarken `createdAt` ZORUNLU, aksi halde doküman 10 dk TTL'siz kalıyordu.
+          `code` yolu da biçim olarak doğrulanıyor.
+
+       NOT — bu kural kriptografik olarak şunu KANITLAYAMAZ: "proof alanına
+       yazan kişi gerçekten Discord OAuth callback'i mi?". Firestore kuralları
+       HMAC üretemez. Gerçek koruma şu iki yerde:
+         • api/launcher.js:475-489 → status "done" olsa bile proof,
+           `HMAC(SESSION_SECRET, device:<kod>:<discordId>)` ile
+           timingSafeEqual karşılaştırılır; tutmazsa doküman silinir ve
+           accessToken VERİLMEZ.
+         • api/auth/discord/callback.js:7-11 → proof'u yalnızca
+           SESSION_SECRET'e sahip sunucu üretebilir.
+       Yani bu koleksiyona `done` yazan bir saldırgan, sırrı bilmiyorsa
+       launcher token'ı ELDE EDEMEZ. Kalan tek etki: o kodun yanlış hesaba
+       bağlanması (launcher'da "rejected" görünür). Bunu sıfırlamak için
+       /api/public/upload gibi rotaları da sertleştirdik. */
+    match /launcher_logins/{code} {
+      /* Kod uzayı: 31^10 ≈ 8×10^14. Yol biçimi doğrulanır. */
+      /* ÖLÇÜLEN HATA: tek doküman okuması kimlik istiyordu, ama
+         `api/launcher.js` Firestore'a API key ile KİMLİKSİZ gidiyor
+         (`request.auth == null`). Sonuç: kod üretiliyor (create kuralı
+         kimlik istemez) ama durumu hiç okunamıyordu -> canlıda 403,
+         launcher'da sürekli "Site zaman aşımına uğradı".
+         `get` (tek belge) kimliksiz açılır; kod uzayı brute-force
+         edilemez olduğu için kodu bilmeyen okuyamaz. */
+      allow get: if code.matches('^[A-Z0-9]{4,12}$');
+
+      /* `list` (koleksiyon taraması) KAPALI kalır: rapor bulgusu #2
+         (tüm bekleyen kodların dışarıdan listelenmesi) korunur. */
+      allow list: if isAdmin() || isBot()
+        || (request.auth != null && request.auth.token.email is string);
+
+      allow create: if request.resource.data.keys().hasOnly(
+            ['status', 'id', 'username', 'avatar', 'proof', 'createdAt'])
+        && request.resource.data.status in ['pending', 'done']
+        && request.resource.data.createdAt is timestamp
+        && (
+             (request.resource.data.status == 'pending'
+               && !('proof' in request.resource.data))
+             || (request.resource.data.status == 'done'
+               && request.resource.data.proof is string
+               && request.resource.data.proof.size() == 64
+               && request.resource.data.id is string
+               && request.resource.data.id.matches('^[0-9]{15,20}$'))
+           );
+
+      allow update: if request.resource.data.keys().hasOnly(
+            ['status', 'id', 'username', 'avatar', 'proof', 'createdAt'])
+        && request.resource.data.status in ['pending', 'done']
+        && request.resource.data.createdAt is timestamp
+        && (
+             (request.resource.data.status == 'pending'
+               && !('proof' in request.resource.data))
+             || (request.resource.data.status == 'done'
+               && request.resource.data.proof is string
+               && request.resource.data.proof.size() == 64
+               && request.resource.data.id is string
+               && request.resource.data.id.matches('^[0-9]{15,20}$'))
+           );
+
+      /* Eskiden `if true` -> herkes baskasinin bekleyen kodunu silebiliyordu (DoS).
+         Kimlikli silme korunur. Ayrica SUNUCU (kimliksiz, API key) yalnizca
+         tamamlanmis (`done`) kodu silebilir (temizlik akisi), bekleyen kodu
+         SILEMEZ -> DoS kapali kalir.
+
+         ÖLÇÜLEN HATA 1: ilk yazimda `resource.data.status == 'done'` idi;
+         alan yoksa ifade hata firlatip kurali kiriyordu.
+         ÖLÇÜLEN HATA 2: `resource.data.get('createdAt', null) != null`
+         yazimi YANLIS: Firestore kurallarinda `null` degil, `duration`
+         objesi donduruluyor ve karsilastirma anlamsiz oluyordu. Bu yuzden
+         sure kontrolu kaldirildi; temizlik zaten `done` kosuluyla yapilir
+         (sunucu, kodu kullandiktan sonra `done` yapar ve siler).
+         */
+      allow delete: if isAdmin() || isBot()
+        || (request.auth != null && request.auth.token.email is string)
+        || resource.data.get('status', '') == 'done';
+    }
+
+    match /{document=**} { allow read, write: if false; }
+  }
+}

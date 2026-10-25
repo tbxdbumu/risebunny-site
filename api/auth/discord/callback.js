@@ -4,13 +4,22 @@ import { CLIENT_ID, FB_KEY, PROJECT, fbCreds, ensureFirebaseUser, linkBot, siteB
 
 import crypto from "node:crypto";
 
+import { zorunluHttps } from "../../../lib/_https.js";
+/* GUNLUK 38 — OLCULEN SORUN (2026-10-25 19:11):
+   Launcher "Giris reddedildi (imza dogrulanamadi)" dedi.
+   SEBEP: `proof` BURADA `SESSION_SECRET` ile imzalaniyordu, ama
+   `api/launcher.js` ayni `proof`'u `TICKET_SECRET` ile dogruluyordu.
+   TICKET_SECRET degisince iki taraf ayristi -> her giris "rejected".
+   ARTIK URETEN ve DOGRULAYAN ayni degiskeni okur: `TICKET_SECRET`
+   (`api/launcher.js` -> secret(), `api/rank/index.js` -> launcherSirri()). */
 function deviceProof(code, discordId) {
-  const secret = process.env.SESSION_SECRET || "";
+  const secret = process.env.TICKET_SECRET || "";
   if (!secret || secret.length < 16) return "";
   return crypto.createHmac("sha256", secret).update(`device:${code}:${discordId}`).digest("hex");
 }
 
 export default async function handler(req, res) {
+  if (zorunluHttps(req, res)) return;
   const base = siteBase(req);
   const cbPath = process.env.DISCORD_CALLBACK_PATH || "/api/auth/discord/callback";
   const redirect = `${base}${cbPath}`;

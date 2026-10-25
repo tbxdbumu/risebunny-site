@@ -20,7 +20,7 @@
  *     ihtiyaci yok ve ID sizintisi istenmiyor.
  *  2) Yazma yolu (`POST`) bu dosyada YOK. Rank yalnizca bot tarafindan
  *     `BOT_API_SECRET` ile yazilir (rb2-main: r!rank ver).
- *  3) Disari yalnizca rank ADI, kullanici adi, avatar ve premium bitisi
+ *  3) Disari yalnizca rank ADI, kullanici adi, avatar HASH'i ve premium bitisi
  *     cikar. Discord ID listesi, mod listesi, premium listesi, lisans
  *     bilgisi Disari CIKMAZ.
  *  4) Rank bilinmeyen/bos ise `user` doner — hata degil, yetki de degil.
@@ -275,13 +275,15 @@ export default async function handler(req, res) {
     const bot = await bottanRank(hedefId);
     if (!bot) {
       // Bot kapali ya da kayit yok: 503 degil, "user" donmek yaniltici olur.
-      return res.status(200).json({ ok: true, rank: "user", kullaniciAdi: "", avatar: "" });
+      return res.status(200).json({ ok: true, rank: "user", kullaniciAdi: "" });
     }
+    /* GUVENLIK: `avatar` KALDIRILDI. Degeri Discord CDN adresiydi ve
+       adres Discord kimligini iceriyordu; bu uc HERKESE ACIK oldugu icin
+       `<id>` veren herkes sahibin kimligini alabiliyordu. */
     return res.status(200).json({
       ok: true,
       rank: bot.rank,
-      kullaniciAdi: bot.kullaniciAdi,
-      avatar: bot.avatar
+      kullaniciAdi: bot.kullaniciAdi
     });
   }
 
@@ -310,8 +312,11 @@ export default async function handler(req, res) {
         kullaniciAdi ||
         tekSatir((oturum && (oturum.name || oturum.username)) || "", 64),
       rank: bot ? bot.rank : "user",
-      avatar: avatar || "",
-      /* Kimlik ICERMEZ: yalnizca avatar dosya adi. */
+      /* GUVENLIK (olculen sizinti, 2026-10-25): burada `avatar: avatar`
+         donuyordu ve degeri `https://cdn.discordapp.com/avatars/<ID>/<hash>.png`
+         idi -> Discord KIMLIGI cevaba duz metin olarak siziyordu.
+         Kaldirildi. Istemci yalnizca `avatar_hash` (dosya adi) alir; resmi
+         `/api/launcher/avatar?h=<hash>` proxy'sinden token ile ceker. */
       avatar_hash: avatarHash(avatar),
       premium_bitis: bitis
     }

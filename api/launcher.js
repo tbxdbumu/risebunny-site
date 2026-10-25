@@ -4,6 +4,7 @@ import { botBase, botHeaders, getSession } from "../lib/_session.js";
 
 import { FB_KEY, PROJECT, readJson, originalPath } from "../lib/_helpers.js";
 
+import { zorunluHttps } from "../lib/_https.js";
 const HARDCODED_PREMIUM_IDS = (process.env.LAUNCHER_PREMIUM_IDS || "").split(",").map(s => s.trim()).filter(Boolean);
 
 function randCode(len = 10) {
@@ -58,7 +59,12 @@ function istemciIp(req) {
   } catch { return "?"; }
 }
 
-const secret = () => process.env.SESSION_SECRET || "";
+/* TEK SIR KAYNAGI: TICKET_SECRET.
+   OLCULEN SORUN (2026-10-25): token BURADA `SESSION_SECRET` ile uretiliyor,
+   `api/rank` ise `LAUNCHER_TOKEN_SECRET` ile dogruluyordu. Iki farkli sir
+   -> imza tutmuyor -> /api/rank 401 -> premium "yok" gorunuyor.
+   Artik uc yer de AYNI degiskeni okur: TICKET_SECRET. */
+const secret = () => process.env.TICKET_SECRET || "";
 
 function verifyLauncherToken(token) {
   const raw = String(token || "");
@@ -118,6 +124,7 @@ function allowedRedirect(uri) {
 }
 
 export default async function handler(req, res) {
+  if (zorunluHttps(req, res)) return;
   const siteOrigin = (process.env.SITE_URL || "").replace(/\/+$/, "");
   if (siteOrigin) {
     res.setHeader("Access-Control-Allow-Origin", siteOrigin);
@@ -213,8 +220,9 @@ export default async function handler(req, res) {
       return res.status(403).json({
         ok: false,
         premium: false,
-        discordId: id,
-        error: "Bu Discord ID için aktif Premium bulunamadı."
+        /* GUVENLIK: `discordId` CEVAPTA YOK — istemci zaten kim oldugunu
+           biliyor; kimligi geri gondermek gereksiz sizinti. */
+        error: "Bu hesap icin aktif Premium bulunamadi."
       });
     }
     if (PROJECT && FB_KEY) {
@@ -270,10 +278,16 @@ export default async function handler(req, res) {
       }
     }
     const accessToken = mintAccessToken(id);
+    /* GUVENLIK: `discordId` CEVAPTA YOK.
+       OLCULDU (2026-10-25): eskiden `discordId: id` donuyordu. Launcher bu
+       alani HIC okumuyor (Rust tarafinda tek bir kullanim yok), yani
+       tamamen gereksiz bir sizintydi: ag uzerinde duz metin Discord kimligi
+       ve launcher'in belleğinde tutulacak bir alan. Kimlik yalnizca
+       sunucuda kalir; istemci onu bilmek zorunda degil.
+       Launcher/rank dogrulamasi `accessToken` (imzali) uzerinden yurur. */
     return res.json({
       ok: true,
       premium: true,
-      discordId: id,
       username: username,
       role: role,
       daysLeft: daysLeft,
@@ -282,6 +296,80 @@ export default async function handler(req, res) {
       server: "RiseBunny Auth Gateway"
     });
   }
+  /* AVATAR PROXY
+     OLCULEN SORUN (2026-10-25): Kullanici "kendi discord profilim
+     gozukmuyor" dedi. Avatar CDN adresi Discord kimligini icerdigi icin
+     cevaplardan KALDIRILMISTI - ama o zaman avatar da kayboldu.
+
+     COZUM: kimligi ISTEMCIYE gondermek yerine kimligi SUNUCUDA tutup
+     avatar BAYTLARINI akitmak. Launcher /api/launcher/avatar cagirir,
+     token Bearer ile gider, site Discord CDN'den cekip dondurur.
+     Istemci hicbir asamada Discord ID'sini GORMEZ.
+
+     Guvenlik: token yoksa 401; yalnizca cdn.discordapp.com (SSRF kapali);
+     Vary: Authorization (cache karismaz). */
+  if (op.endsWith("/avatar")) {
+    const ham = String(req.headers.authorization || "").replace(/^Bearer\s+/i, "") ||
+      String(req.headers["x-launcher-token"] || "");
+    const kimlik = verifyLauncherToken(ham);
+    if (!kimlik) {
+      res.setHeader("Cache-Control", "no-store");
+      return res.status(401).json({ ok: false, error: "oturum gerekli" });
+    }
+    try {
+      /* Avatar kaynagi SIRAYLA:
+         1) Sorgudaki `h` (Discord avatar DOSYA ADI, "a_1b2c..." bicimi).
+            Kimlik ICERMEZ; yalnizca CDN yolunda kullanilir.
+         2) Bot `/api/user/:id` (bot cevrimiciyse daha guncel avatar).
+         Ikisi de yoksa 404. Kimlik hicbir asamada istemciye DONMEZ. */
+      let hash = "";
+      const url2 = new URL(req.url, `https://${req.headers.host}`);
+      const sorguHash = String(url2.searchParams.get("h") || "");
+      if (/^[a-z0-9_]{1,64}$/i.test(sorguHash)) hash = sorguHash;
+
+      if (!hash) {
+        const bBase = botBase();
+        if (bBase && process.env.BOT_API_SECRET) {
+          const r = await fetch(`${bBase}/api/user/${encodeURIComponent(kimlik)}`, {
+            headers: botHeaders()
+          });
+          if (r.ok) {
+            const u = await r.json().catch(() => ({}));
+            const b = String(u.avatar || "");
+            if (/^[a-z0-9_]{1,64}$/i.test(b)) hash = b;
+          }
+        }
+      }
+      if (!hash) return res.status(404).json({ ok: false, error: "avatar yok" });
+      const hedef = /^https:\/\//i.test(hash)
+        ? hash
+        : `https://cdn.discordapp.com/avatars/${kimlik}/${hash}.png?size=128`;
+      let host = "";
+      try { host = new URL(hedef).hostname.toLowerCase(); } catch { host = ""; }
+      if (host !== "cdn.discordapp.com") {
+        return res.status(502).json({ ok: false, error: "gecersiz avatar adresi" });
+      }
+      /* OLCULEN SORUN (2026-10-25): Discord CDN, User-Agent'siz isteklere
+         HTTP 403 donuyor. Basliksiz fetch ile avatar HIC gelmiyordu.
+         Rust istemcisi kendi UA'sini gonderir; site de gondermeli. */
+      const img = await fetch(hedef, {
+        headers: {
+          "User-Agent": "RiseBunny-Launcher/2.0 (+https://risebunny.vercel.app)",
+          "Accept": "image/*"
+        }
+      });
+      if (!img.ok) return res.status(502).json({ ok: false, error: "avatar indirilemedi" });
+      const buf = Buffer.from(await img.arrayBuffer());
+      res.setHeader("Content-Type", img.headers.get("content-type") || "image/png");
+      res.setHeader("Cache-Control", "private, max-age=300");
+      res.setHeader("Vary", "Authorization");
+      res.setHeader("X-Content-Type-Options", "nosniff");
+      return res.status(200).end(buf);
+    } catch {
+      return res.status(502).json({ ok: false, error: "avatar hatasi" });
+    }
+  }
+
   if (op.endsWith("/ticket") && req.method === "POST") {
     const body = await readJson(req);
     let raw = String(body.ticket || "");
@@ -427,12 +515,13 @@ export default async function handler(req, res) {
         error: "user-failed"
       });
       const u = await me.json();
-      const avatar = u.avatar ? `https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png?size=128` : "";
+      /* GUVENLIK: `id` YOK. `id` Discord kimligi, diske/arayuze sizardi.
+         `avatarHash` yalnizca avatar DOSYA ADIDIR ("a_1b2c..." bicimi),
+         kimlik ICERMEZ; proxy bu hash'i kullanarak CDN'den resmi ceker. */
       return res.json({
         ok: true,
-        id: String(u.id),
         username: u.username || "",
-        avatar: avatar
+        avatarHash: u.avatar || ""
       });
     } catch (e) {
       console.error("[launcher] token err:", e.message);
@@ -553,9 +642,12 @@ export default async function handler(req, res) {
         const out = {
           ok: true,
           status: "done",
-          id: discordId,
+          /* GUVENLIK: `id` ve `avatar` KALDIRILDI.
+             OLCULDU: eskiden `id: discordId` + `avatar: <CDN>` donuyordu.
+             Launcher bu alanlari okumuyor (bkz. oturum.rs `CihazDurum`);
+             kimlik dogrulamasi artik token'in ilk parcasi uzerinden YEREL
+             yapiliyor. Yani bu iki alan yalnizca sizintiydi. */
           username: f.username?.stringValue || "",
-          avatar: f.avatar?.stringValue || "",
           accessToken: mintAccessToken(discordId)
         };
         await fetch(launcherDocUrl(code), {
@@ -605,13 +697,13 @@ export default async function handler(req, res) {
         error: "Bot verisi alınamadı."
       });
       const u = await r.json();
-      const avatar = u.avatar ? String(u.avatar).startsWith("http") ? u.avatar : `https://cdn.discordapp.com/avatars/${id}/${u.avatar}.png?size=128` : "";
       return res.json({
         ok: true,
+        /* GUVENLIK: `user.id` ve `user.avatar` KALDIRILDI.
+           `avatar` icinde Discord kimligi gecen bir CDN adresiydi.
+           Istemci yalnizca gorunen adi ve oyun verisini kullaniyor. */
         user: {
-          id: id,
-          username: u.username || "",
-          avatar: avatar
+          username: u.username || ""
         },
         premium: Boolean(u.premium && u.premium.active),
         capes: Array.isArray(u.capes) ? u.capes : [],

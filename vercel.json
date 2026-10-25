@@ -1,6 +1,14 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "header", "key": "x-forwarded-proto", "value": "http" }],
+      "destination": "https://:host/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     { "source": "/api/session/restore", "destination": "/api/session" },
     { "source": "/api/me", "destination": "/api/session" },
@@ -17,6 +25,9 @@
     { "source": "/api/launcher/profile", "destination": "/api/launcher" },
     { "source": "/api/launcher/buy", "destination": "/api/launcher" },
     { "source": "/api/launcher/ticket", "destination": "/api/launcher" },
+    { "source": "/api/launcher/avatar", "destination": "/api/launcher" },
+    { "source": "/api/rank", "destination": "/api/rank/index" },
+    { "source": "/api/rank/:id", "destination": "/api/rank/index" },
     { "source": "/api/leaderboard/rich", "destination": "/api/leaderboard" },
     { "source": "/api/leaderboard/level", "destination": "/api/leaderboard" },
     { "source": "/api/stats", "destination": "/api/public" },

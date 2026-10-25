@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" type="image/svg+xml" href="images/bot.svg">
+<link rel="alternate icon" type="image/png" href="images/bot.png">
+<link rel="apple-touch-icon" href="images/bot.svg">
+<title>Forum — RiseBunny</title>
+<meta name="description" content="RiseBunny topluluk forumu: Discord botları, oyun projeleri ve topluluk tartışmaları.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/styles.css?v=14">
+<link rel="stylesheet" href="css/forum.css?v=14">
+<style>
+/* Forum Hero — non-logged-in users */
+.forum-hero{display:none;padding:60px 20px;text-align:center;background:linear-gradient(180deg,rgba(37,99,235,.08),transparent);border-bottom:1px solid var(--line);margin-bottom:24px}
+.forum-hero h2{font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;margin-bottom:12px}
+.forum-hero p{color:var(--muted);max-width:600px;margin:0 auto 24px;font-size:1.05rem}
+.forum-hero .btn-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.forum-hero .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:10px;font-weight:700;font-size:.9rem;text-decoration:none;transition:.15s}
+.forum-hero .btn-primary{background:var(--ink);color:#fff}
+.forum-hero .btn-primary:hover{background:#1f2937}
+.forum-hero .btn-outline{border:2px solid var(--ink);color:var(--ink);background:transparent}
+.forum-hero .btn-outline:hover{background:var(--ink);color:#fff}
+.forum-hero .btn-discord{background:#5865f2;color:#fff}
+.forum-hero .btn-discord:hover{background:#4752c4}
+</style>
+</head>
+<body>
+
+<header class="site-header" id="navbar">
+  <div class="header-in">
+    <div style="display:flex;align-items:center;gap:14px">
+      <a class="brand" href="index.html"><img src="images/bot.svg" alt="RiseBunny" class="brand-icon">RiseBunny</a>
+      <a class="nav-subtag" href="#/"><i class="fa-regular fa-comments"></i> Forum</a>
+    </div>
+    <div class="header-side">
+      <div class="lang-toggle" role="group" aria-label="Language">
+        <button type="button" class="lang-btn" id="flang-tr" onclick="rbSetLang('tr')"><span class="flag" aria-hidden="true">🇹🇷</span>TR</button>
+        <button type="button" class="lang-btn" id="flang-en" onclick="rbSetLang('en')"><span class="flag" aria-hidden="true">🇬🇧</span>EN</button>
+      </div>
+      <span id="rb-nav-user"></span>
+    </div>
+  </div>
+</header>
+
+<!-- Hero for guests -->
+<section class="forum-hero" id="forum-hero">
+  <h2><span data-i18n="tr">RiseBunny Forum</span><span data-i18n="en">RiseBunny Forum</span></h2>
+  <p><span data-i18n="tr">Topluluğumuza katıl, konular aç, tartış, bilgi paylaş. Discord ile giriş yaparak tüm özelliklere eriş.</span><span data-i18n="en">Join our community, create threads, discuss, share knowledge. Sign in with Discord to access all features.</span></p>
+  <div class="btn-row">
+    <a class="btn btn-discord" href="/api/auth/discord/start?next=/forum"><i class="fa-brands fa-discord"></i> <span data-i18n="tr">Discord ile Giriş</span><span data-i18n="en">Login with Discord</span></a>
+    <a class="btn btn-outline" href="changelog.html"><i class="fa-solid fa-list-check"></i> <span data-i18n="tr">Güncelleme Notları</span><span data-i18n="en">Changelog</span></a>
+    <a class="btn btn-outline" href="docs.html"><i class="fa-solid fa-book"></i> <span data-i18n="tr">Dökümantasyon</span><span data-i18n="en">Documentation</span></a>
+  </div>
+</section>
+
+<main id="view"><div class="rb-empty"><i class="fa-solid fa-spinner fa-spin"></i> <span data-i18n="tr">Yükleniyor...</span><span data-i18n="en">Loading...</span></div></main>
+
+<footer class="rb-footer">
+  <div class="footer-links">
+    <a href="index.html">RiseBunny</a>
+    <a href="risebunny.html">Bot</a>
+    <a href="docs.html"><span data-i18n="tr">Dökümantasyon</span><span data-i18n="en">Docs</span></a>
+    <a href="changelog.html"><span data-i18n="tr">Güncelleme Notları</span><span data-i18n="en">Changelog</span></a>
+    <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
+  </div>
+  <span data-i18n="tr">© 2026 RiseBunny — Tüm hakları saklıdır.</span>
+  <span data-i18n="en">© 2026 RiseBunny — All rights reserved.</span>
+</footer>
+
+<script src="js/firebase-config.js?v=9"></script>
+<script src="js/maintenance.js?v=6"></script>
+<script>
+  function __rbInitForumFirebase() {
+    try {
+      if (!window.firebase) return;
+      if (!firebase.apps.length) firebase.initializeApp(window.firebaseConfig);
+      window.db = firebase.firestore();
+      window.auth = firebase.auth();
+    } catch (e) {
+      try { var fa = firebase.initializeApp(window.firebaseConfig, 'forum'); window.db = fa.firestore(); window.auth = fa.auth(); } catch (e2) {}
+    }
+  }
+  // Try immediately; if SDK not yet loaded, retry after it finishes loading
+  if (window.firebase && window.firebase.firestore) {
+    __rbInitForumFirebase();
+  } else {
+    document.addEventListener('DOMContentLoaded', function() {
+      var tries = 0;
+      var iv = setInterval(function() {
+        tries++;
+        if (window.firebase && window.firebase.firestore) { clearInterval(iv); __rbInitForumFirebase(); }
+        else if (tries > 20) clearInterval(iv);
+      }, 200);
+    });
+  }
+</script>
+<script src="js/forum-auth.js"></script>
+<script src="js/rb-env.js"></script>
+<script src="js/auth.js?v=3"></script>
+<script src="js/forum.js?v=16"></script>
+<script>
+  // Show/hide hero based on auth state (auth.js will call paint())
+  window.addEventListener('load', function() {
+    const checkAuth = setInterval(function() {
+      if (window.RBSession && !window.RBSession.loading) {
+        clearInterval(checkAuth);
+        const hero = document.getElementById('forum-hero');
+        if (hero) hero.style.display = window.RBSession.ok ? 'none' : 'block';
+      }
+    }, 100);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#ffffff" />
+<link rel="icon" type="image/svg+xml" href="images/bot.svg">
+<title>Kullanım Şartları · RiseBunny</title>
+<style>
+:root{
+  --bg:#ffffff; --ink:#111827; --muted:#4b5563; --faint:#9ca3af;
+  --line:#e5e7eb; --accent:#2563eb; --accent-ink:#1d4ed8;
+  --warn:#b45309; --warn-bg:#fffbeb; --r:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+a{color:var(--accent);text-decoration:none}
+a:hover{color:var(--accent-ink)}
+nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav-in{max-width:820px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 24px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:1.05rem;color:var(--ink);text-decoration:none}
+.lang-toggle{position:relative;display:inline-flex;gap:2px;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:#f9fafb;isolation:isolate;transition:box-shadow .3s ease,border-color .3s ease}
+.lang-toggle:hover{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.lang-toggle button{position:relative;display:inline-flex;align-items:center;gap:6px;background:transparent;border:0;color:var(--muted);padding:6px 13px;font-weight:700;font-size:.78rem;letter-spacing:.04em;cursor:pointer;font-family:inherit;overflow:hidden;transition:color .3s ease,transform .25s ease;-webkit-tap-highlight-color:transparent}
+.lang-toggle button::before{content:'';position:absolute;inset:0;background:var(--ink);transform:scaleX(0);transform-origin:left center;transition:transform .35s cubic-bezier(.65,0,.35,1);z-index:-1}
+.lang-toggle button:hover{color:var(--ink);transform:translateY(-1px)}
+.lang-toggle button.active{color:#fff;animation:rbBtnPop .45s ease}
+.lang-toggle button.active::before{transform:scaleX(1)}
+.lang-toggle .flag{display:inline-block;font-size:.95rem;line-height:1;opacity:.4;filter:grayscale(.75);transform:scale(.75) rotate(-12deg);transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .3s ease,filter .3s ease}
+.lang-toggle button:hover .flag{opacity:.75;filter:grayscale(.25);transform:scale(.9) rotate(-6deg)}
+.lang-toggle button.active .flag{opacity:1;filter:grayscale(0);transform:scale(1) rotate(0);animation:rbFlagWave .8s .12s ease}
+@keyframes rbFlagWave{0%,100%{transform:scale(1) rotate(0)}20%{transform:scale(1.18) rotate(-9deg)}40%{transform:scale(1.06) rotate(7deg)}60%{transform:scale(1.14) rotate(-5deg)}80%{transform:scale(1.04) rotate(3deg)}}
+@keyframes rbBtnPop{0%{transform:scale(1)}40%{transform:scale(.93)}70%{transform:scale(1.03)}100%{transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.lang-toggle button,.lang-toggle button::before,.lang-toggle .flag{transition:none!important;animation:none!important}}
+.wrap{max-width:820px;margin:auto;padding:0 24px}
+header.hero{padding:64px 0 28px}
+h1{font-size:clamp(1.9rem,5vw,2.8rem);font-weight:800;letter-spacing:-.02em;margin:0 0 12px}
+.hero p{max-width:640px;color:var(--muted);font-size:1.02rem}
+main{padding:16px 0 40px;display:grid;gap:18px}
+.card{border:1px solid var(--line);border-radius:var(--r);padding:26px 24px}
+.card h2{display:flex;align-items:center;gap:12px;font-size:1.15rem;margin-bottom:12px}
+.num{flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:8px;background:var(--ink);color:#fff;font-size:.85rem;font-weight:700}
+.card p{color:var(--muted);margin-bottom:10px}
+.card p:last-child{margin-bottom:0}
+.card ul{margin:6px 0 4px 20px;color:var(--muted)}
+.card li{margin-bottom:8px}
+.card strong{color:var(--ink)}
+.warn{border-left:3px solid var(--warn);background:var(--warn-bg);padding:16px 20px;border-radius:8px;margin-top:8px}
+.warn strong{color:var(--warn)}
+.cta{margin:24px 0 10px;padding:36px 26px;border:1px solid var(--line);border-radius:var(--r);text-align:center}
+.cta h3{font-size:1.3rem;margin-bottom:8px}
+.cta p{color:var(--muted);margin-bottom:24px}
+.discord-icon-btn{display:inline-grid;place-items:center;width:56px;height:56px;border-radius:50%;background:#5865F2;text-decoration:none}
+.discord-icon-btn:hover{background:#4752c4}
+.discord-icon-btn svg{width:26px;height:26px;fill:#fff}
+footer{border-top:1px solid var(--line);padding:28px 0 40px;margin-top:24px;text-align:center;color:var(--muted);font-size:.86rem}
+footer .links{display:flex;gap:18px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+footer a{color:var(--accent);text-decoration:none;font-weight:600}
+footer a:hover{color:var(--accent-ink)}
+[data-i18n]{display:none}
+html[lang="tr"] [data-i18n="tr"]{display:inline}
+html[lang="en"] [data-i18n="en"]{display:inline}
+@media(max-width:600px){.card{padding:22px 18px}header.hero{padding-top:44px}}
+</style>
+</head>
+<body>
+
+<nav><div class="nav-in">
+  <a class="logo" href="/">RiseBunny</a>
+  <div class="lang-toggle" role="tablist" aria-label="Dil seçimi">
+    <button data-lang="tr" class="active" aria-pressed="true"><span class="flag" aria-hidden="true">🇹🇷</span>TR</button>
+    <button data-lang="en" aria-pressed="false"><span class="flag" aria-hidden="true">🇬🇧</span>EN</button>
+  </div>
+</div></nav>
+
+<div class="wrap">
+  <header class="hero">
+    <h1>
+      <span data-i18n="tr">Kullanım Şartları</span>
+      <span data-i18n="en">Terms of Service</span>
+    </h1>
+    <p>
+      <span data-i18n="tr">RiseBunny hizmetlerini kullanarak aşağıdaki şartları kabul etmiş olursun. Lütfen dikkatle oku.</span>
+      <span data-i18n="en">By using RiseBunny services, you agree to the terms below. Please read carefully.</span>
+    </p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2><span class="num">1</span>
+        <span data-i18n="tr">Hizmetin Kapsamı</span>
+        <span data-i18n="en">Scope of Services</span>
+      </h2>
+      <p>
+        <span data-i18n="tr">RiseBunny; Discord botları, Minecraft client/mod araçları, Brawl Stars projeleri ve benzeri yazılımları <strong>tamamen ücretsiz</strong> olarak sunar. Hizmetler "olduğu gibi" sağlanır.</span>
+        <span data-i18n="en">RiseBunny provides Discord bots, Minecraft client/mod tools, Brawl Stars projects, and similar software <strong>completely free of charge</strong>. Services are provided "as is".</span>
+      </p>
+    </section>
+
+    <section class="card">
+      <h2><span class="num">2</span>
+        <span data-i18n="tr">Kabul Edilen Kullanım</span>
+        <span data-i18n="en">Acceptable Use</span>
+      </h2>
+      <ul>
+        <li><span data-i18n="tr">Kişisel ve topluluk amaçlı kullanım serbesttir.</span>
+            <span data-i18n="en">Personal and community use is allowed.</span></li>
+        <li><span data-i18n="tr">Kaynak göstermeden yeniden dağıtım yasaktır.</span>
+            <span data-i18n="en">Redistribution without attribution is prohibited.</span></li>
+        <li><span data-i18n="tr">Hizmetleri yasa dışı faaliyetlerde (dolandırıcılık, saldırı vb.) kullanamazsın.</span>
+            <span data-i18n="en">You may not use the services for illegal activities (fraud, attacks, etc.).</span></li>
+      </ul>
+      <div class="warn">
+        <strong>
+          <span data-i18n="tr">Önemli:</span>
+          <span data-i18n="en">Important:</span>
+        </strong>
+        <span data-i18n="tr"> Minecraft, Brawl Stars gibi oyunlarda kullanılan araçlar ilgili oyunların Hizmet Şartları'na aykırı olabilir. Kullanım riski tamamen sana aittir; RiseBunny hesap banlarından sorumlu tutulamaz.</span>
+        <span data-i18n="en"> Tools used in games like Minecraft or Brawl Stars may violate those games' Terms of Service. Use is entirely at your own risk; RiseBunny cannot be held responsible for account bans.</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2><span class="num">3</span>
+        <span data-i18n="tr">Fikri Mülkiyet</span>
+        <span data-i18n="en">Intellectual Property</span>
+      </h2>
+      <p>
+        <span data-i18n="tr">RiseBunny logosu, ismi, kodları ve tasarımları RiseBunny Ekibi'ne aittir. Açık kaynak olarak paylaşılan kısımlar ilgili lisanslarıyla (MIT vb.) kullanılabilir.</span>
+        <span data-i18n="en">The RiseBunny logo, name, code, and designs belong to the RiseBunny Team. Parts shared as open source may be used under their respective licenses (MIT, etc.).</span>
+      </p>
+    </section>
+
+    <section class="card">
+      <h2><span class="num">4</span>
+        <span data-i18n="tr">Sorumluluk Reddi</span>
+        <span data-i18n="en">Disclaimer of Liability</span>
+      </h2>
+      <p>
+        <span data-i18n="tr">RiseBunny, hizmetlerin kesintisiz veya hatasız olacağını garanti etmez. Doğrudan veya dolaylı zararlardan (veri kaybı, ban, kâr kaybı vb.) sorumlu değiliz.</span>
+        <span data-i18n="en">RiseBunny does not guarantee that services will be uninterrupted or error-free. We are not liable for direct or indirect damages (data loss, bans, lost profits, etc.).</span>
+      </p>
+    </section>
+
+    <section class="card">
+      <h2><span class="num">5</span>
+        <span data-i18n="tr">Topluluk Kuralları</span>
+        <span data-i18n="en">Community Rules</span>
+      </h2>
+      <ul>
+        <li><span data-i18n="tr">Discord sunucusunda saygılı davranış zorunludur.</span>
+            <span data-i18n="en">Respectful behavior is required in our Discord server.</span></li>
+        <li><span data-i18n="tr">Spam, raid, nefret söylemi kalıcı ban sebebidir.</span>
+            <span data-i18n="en">Spam, raids, and hate speech result in permanent bans.</span></li>
+        <li><span data-i18n="tr">Moderasyon kararları nihaidir.</span>
+            <span data-i18n="en">Moderation decisions are final.</span></li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="num">6</span>
+        <span data-i18n="tr">Değişiklikler</span>
+        <span data-i18n="en">Changes</span>
+      </h2>
+      <p>
+        <span data-i18n="tr">Şartları önceden bildirimde bulunmaksızın güncelleyebiliriz. Güncel sürüm her zaman bu sayfada yayınlanır.</span>
+        <span data-i18n="en">We may update these terms without prior notice. The current version is always published on this page.</span>
+      </p>
+    </section>
+
+    <section class="cta">
+      <h3>
+        <span data-i18n="tr">Başka sorun mu var?</span>
+        <span data-i18n="en">Need anything else?</span>
+      </h3>
+      <p>
+        <span data-i18n="tr">Soruların için Discord sunucumuz her zaman açık.</span>
+        <span data-i18n="en">Our Discord server is always open for your questions.</span>
+      </p>
+      <a class="discord-icon-btn" href="https://share.google/W05uUtsltZUcx9fne" target="_blank" rel="noopener" aria-label="Discord">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M20.317 4.369A19.791 19.791 0 0 0 16.558 3c-.211.376-.442.867-.604 1.258a18.27 18.27 0 0 0-5.908 0A12.573 12.573 0 0 0 9.44 3a19.791 19.791 0 0 0-3.762 1.369C2.084 9.847 1.074 15.187 1.578 20.456a19.904 19.904 0 0 0 6.034 3.055 14.73 14.73 0 0 0 1.292-2.104 13.024 13.024 0 0 1-2.034-.972c.171-.124.337-.254.497-.387a14.217 14.217 0 0 0 12.266 0c.162.133.328.263.497.387a13.025 13.025 0 0 1-2.036.973c.374.652.798 1.27 1.292 2.104a19.893 19.893 0 0 0 6.034-3.055c.593-6.173-1.05-11.47-4.103-15.987zM9.681 17.328c-1.164 0-2.121-1.066-2.121-2.375 0-1.31.937-2.375 2.121-2.375 1.193 0 2.14 1.075 2.121 2.375 0 1.31-.938 2.375-2.121 2.375zm6.638 0c-1.164 0-2.12-1.066-2.12-2.375 0-1.31.937-2.375 2.12-2.375 1.193 0 2.14 1.075 2.121 2.375 0 1.31-.937 2.375-2.12 2.375z"/>
+        </svg>
+      </a>
+    </section>
+  </main>
+
+  <footer>
+    <div class="links">
+      <a href="/"><span data-i18n="tr">Ana Sayfa</span><span data-i18n="en">Home</span></a>
+      <a href="/privacy"><span data-i18n="tr">Gizlilik Politikası</span><span data-i18n="en">Privacy</span></a>
+    </div>
+    © 2026 RiseBunny Software · 
+    <span data-i18n="tr">Yükselmek İçin Doğduk!</span>
+    <span data-i18n="en">Born to Rise!</span>
+  </footer>
+</div>
+
+<script>
+const titles={tr:"Kullanım Şartları · RiseBunny",en:"Terms of Service · RiseBunny"};
+function setLang(lang){
+  document.documentElement.lang=lang;
+  document.title=titles[lang];
+  document.querySelectorAll('.lang-toggle button').forEach(b=>{
+    const active=b.dataset.lang===lang;
+    b.classList.toggle('active',active);
+    b.setAttribute('aria-pressed',active);
+  });
+  try{localStorage.setItem('rb_lang',lang)}catch(e){}
+}
+document.querySelectorAll('.lang-toggle button').forEach(b=>{
+  b.addEventListener('click',()=>setLang(b.dataset.lang));
+});
+const params=new URLSearchParams(location.search);
+const saved=typeof localStorage!=='undefined'&&localStorage.getItem('rb_lang');
+setLang(params.get('lang')||(saved||'tr'));
+</script>
+</body>
+</html>

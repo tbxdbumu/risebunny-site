@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#ffffff" />
+<link rel="icon" type="image/svg+xml" href="images/bot.svg">
+<title>Gizlilik Politikası · RiseBunny</title>
+<style>
+:root{
+  --bg:#ffffff; --ink:#111827; --muted:#4b5563; --faint:#9ca3af;
+  --line:#e5e7eb; --accent:#2563eb; --accent-ink:#1d4ed8; --r:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+a{color:var(--accent);text-decoration:none}
+a:hover{color:var(--accent-ink)}
+nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav-in{max-width:820px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 24px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:1.05rem;color:var(--ink);text-decoration:none}
+.lang-toggle{position:relative;display:inline-flex;gap:2px;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:#f9fafb;isolation:isolate;transition:box-shadow .3s ease,border-color .3s ease}
+.lang-toggle:hover{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.lang-toggle button{position:relative;display:inline-flex;align-items:center;gap:6px;background:transparent;border:0;color:var(--muted);padding:6px 13px;font-weight:700;font-size:.78rem;letter-spacing:.04em;cursor:pointer;font-family:inherit;overflow:hidden;transition:color .3s ease,transform .25s ease;-webkit-tap-highlight-color:transparent}
+.lang-toggle button::before{content:'';position:absolute;inset:0;background:var(--ink);transform:scaleX(0);transform-origin:left center;transition:transform .35s cubic-bezier(.65,0,.35,1);z-index:-1}
+.lang-toggle button:hover{color:var(--ink);transform:translateY(-1px)}
+.lang-toggle button.active{color:#fff;animation:rbBtnPop .45s ease}
+.lang-toggle button.active::before{transform:scaleX(1)}
+.lang-toggle .flag{display:inline-block;font-size:.95rem;line-height:1;opacity:.4;filter:grayscale(.75);transform:scale(.75) rotate(-12deg);transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .3s ease,filter .3s ease}
+.lang-toggle button:hover .flag{opacity:.75;filter:grayscale(.25);transform:scale(.9) rotate(-6deg)}
+.lang-toggle button.active .flag{opacity:1;filter:grayscale(0);transform:scale(1) rotate(0);animation:rbFlagWave .8s .12s ease}
+@keyframes rbFlagWave{0%,100%{transform:scale(1) rotate(0)}20%{transform:scale(1.18) rotate(-9deg)}40%{transform:scale(1.06) rotate(7deg)}60%{transform:scale(1.14) rotate(-5deg)}80%{transform:scale(1.04) rotate(3deg)}}
+@keyframes rbBtnPop{0%{transform:scale(1)}40%{transform:scale(.93)}70%{transform:scale(1.03)}100%{transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.lang-toggle button,.lang-toggle button::before,.lang-toggle .flag{transition:none!important;animation:none!important}}
+.wrap{max-width:820px;margin:auto;padding:0 24px}
+header.hero{padding:64px 0 28px}
+h1{font-size:clamp(1.9rem,5vw,2.8rem);font-weight:800;letter-spacing:-.02em;margin:0 0 12px}
+.hero p{max-width:640px;color:var(--muted);font-size:1.02rem}
+main{padding:16px 0 40px;display:grid;gap:18px}
+.card{border:1px solid var(--line);border-radius:var(--r);padding:26px 24px}
+.card h2{display:flex;align-items:center;gap:12px;font-size:1.15rem;margin-bottom:12px}
+.num{flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:8px;background:var(--ink);color:#fff;font-size:.85rem;font-weight:700}
+.card p{color:var(--muted);margin-bottom:10px}
+.card p:last-child{margin-bottom:0}
+.card ul{margin:6px 0 4px 20px;color:var(--muted)}
+.card li{margin-bottom:8px}
+.card strong{color:var(--ink)}
+.hl{color:var(--accent-ink);font-weight:600}
+.cta{margin:24px 0 10px;padding:36px 26px;border:1px solid var(--line);border-radius:var(--r);text-align:center}
+.cta h3{font-size:1.3rem;margin-bottom:8px}
+.cta p{color:var(--muted);margin-bottom:24px}
+.discord-icon-btn{display:inline-grid;place-items:center;width:56px;height:56px;border-radius:50%;background:#5865F2;text-decoration:none}
+.discord-icon-btn:hover{background:#4752c4}
+.discord-icon-btn svg{width:26px;height:26px;fill:#fff}
+footer{border-top:1px solid var(--line);padding:28px 0 40px;margin-top:24px;text-align:center;color:var(--muted);font-size:.86rem}
+footer .links{display:flex;gap:18px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+footer a{color:var(--accent);text-decoration:none;font-weight:600}
+footer a:hover{color:var(--accent-ink)}
+[data-i18n]{display:none}
+html[lang="tr"] [data-i18n="tr"]{display:inline}
+html[lang="en"] [data-i18n="en"]{display:inline}
+@media(max-width:600px){.card{padding:22px 18px}header.hero{padding-top:44px}}
+</style>
+</head>
+<body>
+
+<nav><div class="nav-in">
+  <a class="logo" href="/">RiseBunny</a>
+  <div class="lang-toggle" role="tablist" aria-label="Dil seçimi">
+    <button data-lang="tr" class="active" aria-pressed="true"><span class="flag" aria-hidden="true">🇹🇷</span>TR</button>
+    <button data-lang="en" aria-pressed="false"><span class="flag" aria-hidden="true">🇬🇧</span>EN</button>
+  </div>
+</div></nav>
+
+<div class="wrap">
+  <header class="hero">
+    <h1>
+      <span data-i18n="tr">Gizlilik Politikası</span>
+      <span data-i18n="en">Privacy Policy</span>
+    </h1>
+    <p>
+      <span data-i18n="tr">Verilerin bizim için kutsaldır. Bu sayfa, risebunny.vercel.app hizmetlerinde hangi verilerin nasıl işlendiğini açık ve net şekilde anlatır.</span>
+      <span data-i18n="en">Your data is sacred to us. This page clearly explains what data is processed and how within risebunny.vercel.app services.</span>
+    </p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2><span class="num">1</span>
+        <span data-i18n="tr">Genel Bakış</span>
+        <span data-i18n="en">Overview</span>
+      </h2>
+      <p>
+        <span data-i18n="tr">RiseBunny ("biz"), tamamen ücretsiz yazılımlar üreten anonim bir topluluk projesidir. Web sitemizi, Discord botlarımızı veya diğer hizmetlerimizi kullandığında bu politika geçerlidir.</span>
+        <span data-i18n="en">RiseBunny ("we", "us") is an anonymous community project producing completely free software. This policy applies when you use our website, Discord bots, or other services.</span>
+      </p>
+      <p>
+        <span class="hl"><span data-i18n="tr">Özet:</span><span data-i18n="en">Summary:</span></span>
+        <span data-i18n="tr"> Minimum veri toplarız, hiçbir şeyi satmayız, her şeyi şeffaf tutarız.</span>
+        <span data-i18n="en"> We collect minimal data, sell nothing, and keep everything transparent.</span>
+      </p>
+    </section>
+
+    <section class="card">
+      <h2><span class="num">2</span>
+        <span data-i18n="tr">Topladığımız Bilgiler</span>
+        <span data-i18n="en">Information We Collect</span>
+      </h2>
+      <ul>
+        <li>
+          <span data-i18n="tr"><strong>İletişim formu:</strong> Gönderdiğin ad, kullanıcı adı ve mesaj içeriği — yalnızca sen yazarsan.</span>
+          <span data-i18n="en"><strong>Contact form:</strong> The name, username, and message content you send — only when you choose to.</span>
+        </li>
+        <li>
+          <span data-i18n="tr"><strong>Discord botları:</strong> Komut kullanım logları ve kullanıcı ID'si. DM'lerin ve özel verilerin <strong>asla</strong> okunmaz.</span>
+          <span data-i18n="en"><strong>Discord bots:</strong> Command usage logs and user ID. Your DMs and private data are <strong>never</strong> read.</span>
+        </li>
+        <li>
+          <span data-i18n="tr"><strong>Otomatik loglar:</strong> Tarayıcı tipi, ziyaret saati — sadece güvenlik ve istatistik için.</span>
+          <span data-i18n="en"><strong>Automatic logs:</strong> Browser type, visit time — only for security and analytics.</span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2><span class="num">3</span>
+        <span data-i18n="tr">Verileri Nasıl Kullanıyoruz?</span>
+        <span data-i18n="en">How We Use Your Data</span>
+      </h2>
+      <ul>
+        <li><span data-i18n="tr">Hizmetleri çalıştırmak, geliştirmek ve hataları düzeltmek,</span>
+            <span data-i18n="en">To operate, improve, and fix our services,</span></li>
+        <li><span data-i18n="tr">Destek taleplerine yanıt vermek,</span>
+            <span data-i18n="en">To respond to support requests,</span></li>
+        <li><span data-i18n="tr">Raid, spam ve kötüye kullanımı engellemek.</span>
+            <span data-i18n="en">To prevent raids, spam, and abuse.</span></li>
+      </ul>
+      <p>
+        <span data-i18n="tr"><strong>Verilerin asla satılmaz, reklam amaçlı kullanılmaz ve üçüncü taraflarla paylaşılmaz.</strong></span>
+        <span data-i18n="en"><strong>Your data is never sold, never used for advertising, and never shared with third parties.</strong></span>
+      </p>
+    </section>
+
+    <section class="card">
+      <h2><span class="num">4</span>
+        <span data-i18n="tr">Çerezler (Cookies)</span>
+        <span data-i18n="en">Cookies</span>
+      </h2>
+      <p>
+        <span data-i18n="tr">Sitemiz yalnızca sitenin çalışması için gerekli teknik çerezleri kullanır. Reklam veya izleme çerezi <strong>bulunmaz</strong>. Tarayıcından çerezleri istediğin an temizleyebilirsin.</span>
+        <span data-i18n="en">Our site only uses technical cookies required for it to function. There are <strong>no</strong> advertising or tracking cookies. You can clear cookies from your browser at any time.</span>
+      </p>
+    </section>
+
+    <section class="card">
+      <h2><span class="num">5</span>
+        <span data-i18n="tr">Veri Güvenliği</span>
+        <span data-i18n="en">Data Security</span>
+      </h2>
+      <p>
+        <span data-i18n="tr">Tüm bağlantılar HTTPS ile şifrelenir. Loglar yalnızca yetkili ekip üyelerince erişilebilen ortamlarda saklanır ve gereksiz veriler periyodik olarak silinir.</span>
+        <span data-i18n="en">All connections are encrypted via HTTPS. Logs are stored in environments accessible only to authorized team members, and unnecessary data is periodically deleted.</span>
+      </p>
+    </section>
+
+    <section class="card">
+      <h2><span class="num">6</span>
+        <span data-i18n="tr">Hakların</span>
+        <span data-i18n="en">Your Rights</span>
+      </h2>
+      <ul>
+        <li><span data-i18n="tr">Hakkındaki verilere erişme,</span><span data-i18n="en">Access your data,</span></li>
+        <li><span data-i18n="tr">Düzeltilmesini veya tamamen silinmesini isteme,</span><span data-i18n="en">Request correction or full deletion,</span></li>
+        <li><span data-i18n="tr">İşlemeye itiraz etme.</span><span data-i18n="en">Object to processing.</span></li>
+      </ul>
+      <p>
+        <span data-i18n="tr">Bu hakları kullanmak için Discord sunucumuzdan bize ulaşman yeterli — talepler en geç 7 gün içinde yanıtlanır.</span>
+        <span data-i18n="en">To exercise these rights, simply contact us on our Discord server — requests are answered within 7 days at most.</span>
+      </p>
+    </section>
+
+    <section class="card">
+      <h2><span class="num">7</span>
+        <span data-i18n="tr">Üçüncü Taraf Hizmetler</span>
+        <span data-i18n="en">Third-Party Services</span>
+      </h2>
+      <p>
+        <span data-i18n="tr">Site <strong>Vercel</strong> üzerinde barındırılır; Discord hizmetleri <strong>Discord Inc.</strong> altyapısını kullanır. Bu platformların kendi gizlilik politikaları geçerlidir.</span>
+        <span data-i18n="en">The site is hosted on <strong>Vercel</strong>; Discord services use <strong>Discord Inc.</strong> infrastructure. Each platform's own privacy policy applies.</span>
+      </p>
+    </section>
+
+    <section class="card">
+      <h2><span class="num">8</span>
+        <span data-i18n="tr">Değişiklikler</span>
+        <span data-i18n="en">Changes</span>
+      </h2>
+      <p>
+        <span data-i18n="tr">Bu politika zaman zaman güncellenebilir. Güncel sürüm her zaman bu sayfada yayınlanır; önemli değişikliklerde Discord sunucusundan duyuru yapılır.</span>
+        <span data-i18n="en">This policy may be updated from time to time. The current version is always published on this page; significant changes are announced on our Discord server.</span>
+      </p>
+    </section>
+
+    <section class="cta">
+      <h3><span data-i18n="tr">Sorun mu var?</span><span data-i18n="en">Got a question?</span></h3>
+      <p>
+        <span data-i18n="tr">Gizliliğinle ilgili her konuda bize Discord üzerinden ulaşabilirsin.</span>
+        <span data-i18n="en">Reach out to us on Discord for anything related to your privacy.</span>
+      </p>
+      <a class="discord-icon-btn" href="https://share.google/W05uUtsltZUcx9fne" target="_blank" rel="noopener" aria-label="Discord">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M20.317 4.369A19.791 19.791 0 0 0 16.558 3c-.211.376-.442.867-.604 1.258a18.27 18.27 0 0 0-5.908 0A12.573 12.573 0 0 0 9.44 3a19.791 19.791 0 0 0-3.762 1.369C2.084 9.847 1.074 15.187 1.578 20.456a19.904 19.904 0 0 0 6.034 3.055 14.73 14.73 0 0 0 1.292-2.104 13.024 13.024 0 0 1-2.034-.972c.171-.124.337-.254.497-.387a14.217 14.217 0 0 0 12.266 0c.162.133.328.263.497.387a13.025 13.025 0 0 1-2.036.973c.374.652.798 1.27 1.292 2.104a19.893 19.893 0 0 0 6.034-3.055c.593-6.173-1.05-11.47-4.103-15.987zM9.681 17.328c-1.164 0-2.121-1.066-2.121-2.375 0-1.31.937-2.375 2.121-2.375 1.193 0 2.14 1.075 2.121 2.375 0 1.31-.938 2.375-2.121 2.375zm6.638 0c-1.164 0-2.12-1.066-2.12-2.375 0-1.31.937-2.375 2.12-2.375 1.193 0 2.14 1.075 2.121 2.375 0 1.31-.937 2.375-2.12 2.375z"/>
+        </svg>
+      </a>
+    </section>
+  </main>
+
+  <footer>
+    <div class="links">
+      <a href="/"><span data-i18n="tr">Ana Sayfa</span><span data-i18n="en">Home</span></a>
+      <a href="/terms"><span data-i18n="tr">Kullanım Şartları</span><span data-i18n="en">Terms</span></a>
+    </div>
+    © 2026 RiseBunny Software · 
+    <span data-i18n="tr">Geleceği Bu Günden Yaşa!</span>
+    <span data-i18n="en">Live the Future Today!</span>
+  </footer>
+</div>
+
+<script>
+const titles={tr:"Gizlilik Politikası · RiseBunny",en:"Privacy Policy · RiseBunny"};
+function setLang(lang){
+  document.documentElement.lang=lang;
+  document.title=titles[lang];
+  document.querySelectorAll('.lang-toggle button').forEach(b=>{
+    const active=b.dataset.lang===lang;
+    b.classList.toggle('active',active);
+    b.setAttribute('aria-pressed',active);
+  });
+  try{localStorage.setItem('rb_lang',lang)}catch(e){}
+}
+document.querySelectorAll('.lang-toggle button').forEach(b=>{
+  b.addEventListener('click',()=>setLang(b.dataset.lang));
+});
+const params=new URLSearchParams(location.search);
+const saved=typeof localStorage!=='undefined'&&localStorage.getItem('rb_lang');
+setLang(params.get('lang')||(saved||'tr'));
+</script>
+</body>
+</html>

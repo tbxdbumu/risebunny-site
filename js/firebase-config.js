@@ -44,7 +44,7 @@
       b.setAttribute("role", "status");
       b.style.cssText = "position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:2147483646;max-width:min(560px,92vw);display:flex;gap:10px;align-items:center;padding:10px 12px 10px 14px;border-radius:12px;background:rgba(28,28,44,.96);border:1px solid rgba(255,180,80,.45);color:#ffe8c8;font:500 13px/1.4 system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.45)";
       var t = document.createElement("span");
-      t.textContent = "Bağlantı kurulamadı — bazı alanlar geç yüklenebilir.";
+      t.textContent = "Bağlantı kurulamadı — bazı alanlar geç yüklenebilir. (" + reason + ")";
       var x = document.createElement("button");
       x.type = "button";
       x.textContent = "×";

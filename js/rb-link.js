@@ -58,8 +58,11 @@
     if (document.getElementById("rb-dev-link")) return;
     var wrap = document.createElement("div");
     wrap.id = "rb-dev-link";
+    /* İki yerde duruyor: sağ alt köşe (masaüstü) ve alt orta (dar ekran).
+       Modal ve şerit (rb-issue) ile üst üste binmesin diye z-index düşük,
+       alt kenardan 18px pay bırakılıyor. */
     wrap.setAttribute("style", [
-      "position:fixed", "right:18px", "bottom:18px", "z-index:9998",
+      "position:fixed", "right:18px", "bottom:18px", "z-index:9990",
       "font:600 13px/1 system-ui,sans-serif"
     ].join(";"));
     var btn = document.createElement("button");

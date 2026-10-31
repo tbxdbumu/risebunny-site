@@ -39,13 +39,18 @@ export default async function handler(req, res) {
     if (req.method !== "GET") return res.status(405).json({
       error: "Method not allowed"
     });
+    /* Varsayılanlar `lib/_helpers.js` ile AYNI kaynaktan geliyor. Önceden
+       burada yalnızca `process.env` okunuyordu; Preview deployment'ında
+       FIREBASE_* değişkenleri tanımlı olmadığı için uç 500 dönüyor, ana
+       sayfa da (o zaman) kendini 404 ile eziyordu. Üretimde env zaten
+       tanımlı olduğu için değerler env'den gelmeye devam eder. */
     const config = {
-      apiKey: process.env.FIREBASE_API_KEY,
-      authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-      messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-      appId: process.env.FIREBASE_APP_ID
+      apiKey: process.env.FIREBASE_API_KEY || "AIzaSyAq5Nafl9aI2TabzGsj5J9ij6lNwyfTguM",
+      authDomain: process.env.FIREBASE_AUTH_DOMAIN || "gen-lang-client-0590499912.firebaseapp.com",
+      projectId: process.env.FIREBASE_PROJECT_ID || "gen-lang-client-0590499912",
+      storageBucket: process.env.FIREBASE_STORAGE_BUCKET || "gen-lang-client-0590499912.firebasestorage.app",
+      messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || "203829901581",
+      appId: process.env.FIREBASE_APP_ID || "1:203829901581:web:66d532c52155db4aea9844"
     };
     if (!config.apiKey || !config.projectId) {
       return res.status(500).json({
@@ -54,7 +59,8 @@ export default async function handler(req, res) {
     }
     res.setHeader("Cache-Control", "public, max-age=3600");
     return res.status(200).json(config);
-  }  if (op.endsWith("/stats")) {
+  }
+  if (op.endsWith("/stats")) {
     res.setHeader("Cache-Control", "public, s-maxage=120, stale-while-revalidate=60");
     const out = {
       servers: null,

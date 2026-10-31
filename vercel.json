@@ -71,6 +71,14 @@
       "destination": "/panel.html"
     },
     {
+      "source": "/api/panel",
+      "destination": "/api/public"
+    },
+    {
+      "source": "/api/panel/:seg",
+      "destination": "/api/public"
+    },
+    {
       "source": "/risebunny",
       "destination": "/panel.html"
     },

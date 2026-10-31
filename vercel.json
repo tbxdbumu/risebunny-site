@@ -3,14 +3,6 @@
   "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/risebunny",
-      "destination": "/risebunny-panel"
-    },
-    {
-      "source": "/risebunny/panel",
-      "destination": "/risebunny-panel"
-    },
-    {
       "source": "/api/session/restore",
       "destination": "/api/session"
     },
@@ -77,6 +69,14 @@
     {
       "source": "/api/panel/:seg",
       "destination": "/api/public"
+    },
+    {
+      "source": "/risebunny",
+      "destination": "/risebunny-panel"
+    },
+    {
+      "source": "/risebunny/panel",
+      "destination": "/risebunny-panel"
     },
     {
       "source": "/api/rank",

@@ -3,6 +3,14 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/risebunny",
+      "destination": "/panel"
+    },
+    {
+      "source": "/risebunny/panel",
+      "destination": "/panel"
+    },
+    {
       "source": "/api/session/restore",
       "destination": "/api/session"
     },
@@ -65,14 +73,6 @@
     {
       "source": "/api/launcher/avatar",
       "destination": "/api/launcher"
-    },
-    {
-      "source": "/risebunny/panel",
-      "destination": "/panel.html"
-    },
-    {
-      "source": "/api/panel",
-      "destination": "/api/public"
     },
     {
       "source": "/api/panel/:seg",

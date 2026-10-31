@@ -75,14 +75,6 @@
       "destination": "/panel.html"
     },
     {
-      "source": "/api/panel",
-      "destination": "/api/panel/index"
-    },
-    {
-      "source": "/api/panel/:seg",
-      "destination": "/api/panel/index"
-    },
-    {
       "source": "/api/rank",
       "destination": "/api/rank/index"
     },

@@ -103,7 +103,24 @@ function requireIdentity(req, body) {
 function mintAccessToken(id) {
   const s = secret();
   if (!s) return "";
-  const expires = Date.now() + 12 * 60 * 60 * 1000;
+  /* ── OLCULEN SIKAYET (2026-10-26) ──────────────────────────────────
+     KULLANICI: "her girişte discord sormasın bi kere kaydetsin" /
+     "sadece süre takibi premium için yapsa yeter".
+
+     Eski deger 12 SAAT idi. Launcher oturumu DPAPI ile kalici sakliyor
+     (oturum.json), ama bilet 12 saat sonra gecersiz olunca
+     `baslangicta_yukle()` dosyayi siliyor ve kullanici HER GUNDE yeniden
+     Discord'a yonlendiriliyordu.
+
+     Kullanici istegi: Discord bir kez kaydedilsin, geriye yalnizca
+     PREMIUM SURESI takip edilsin. Bu yuzden bilet omru 30 gune cikarildi.
+
+     GUVENLIK NOTU: bu bir yetki genisletmesi DEGILDIR. Bilet yalnizca
+     "bu Discord kimligi bu launcher'da oturum acti" der; premium/yasak/
+     ban karari HER ISTEKTE sunucuda yeniden bakilir (bkz. api/rank,
+     api/client). Bilet 30 gun gecerli olsa da premium bitince erisim
+     yine kapanir. */
+  const expires = Date.now() + 30 * 24 * 60 * 60 * 1000;
   const payload = `${id}.${expires}`;
   const sig = crypto.createHmac("sha256", s).update(payload).digest("hex");
   return `${payload}.${sig}`;

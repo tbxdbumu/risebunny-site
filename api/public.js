@@ -2,11 +2,33 @@ import { botBase } from "../lib/_session.js";
 
 import { FB_KEY, PROJECT, BOT_ID, originalPath } from "../lib/_helpers.js";
 
+import { zorunluHttps } from "../lib/_https.js";
+
+import { panelRouteOf, handlePanel } from "../lib/_panel.js";
+import * as launcher from "../lib/_launcher.js";
+import { readJson } from "../lib/_helpers.js";
+
 export default async function handler(req, res) {
+  if (zorunluHttps(req, res)) return;
   const url = new URL(req.url, `https://${req.headers.host}`);
   const op = originalPath(req, url);
-  const bBase = botBase();
   console.log("[public] path:", op);
+
+  /* ── PANEL ─────────────────────────────────────────────────────────────
+     `/api/panel/*` buraya rewrite edilir (vercel.json). Ayrı bir serverless
+     fonksiyon AÇILAMAZ: Hobby planı deployment başına 12 fonksiyonla sınırlı
+     ve site o sınırı doldurmuş durumda. Mantık lib/_panel.js'te. */
+  const panel = panelRouteOf(op);
+  if (panel) {
+    return handlePanel(req, res, panel, url, op, {
+      readJson,
+      /* `lib/_launcher.js` bir bütün olarak geçirilir: her fonksiyonu tek tek
+         kopyalamak yeni bir yardımcı eklendiğinde kolayca eksik kalır. */
+      ...launcher,
+    });
+  }
+
+  const bBase = botBase();
   if (op.endsWith("/firebase-config")) {
     const origin = (process.env.SITE_URL || "").replace(/\/+$/, "");
     res.setHeader("Access-Control-Allow-Origin", origin || "");
@@ -32,8 +54,7 @@ export default async function handler(req, res) {
     }
     res.setHeader("Cache-Control", "public, max-age=3600");
     return res.status(200).json(config);
-  }
-  if (op.endsWith("/stats")) {
+  }  if (op.endsWith("/stats")) {
     res.setHeader("Cache-Control", "public, s-maxage=120, stale-while-revalidate=60");
     const out = {
       servers: null,

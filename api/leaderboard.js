@@ -2,7 +2,9 @@ import { botBase, botHeaders } from "../lib/_session.js";
 
 import { originalPath } from "../lib/_helpers.js";
 
+import { zorunluHttps } from "../lib/_https.js";
 export default async function handler(req, res) {
+  if (zorunluHttps(req, res)) return;
   const site = (process.env.SITE_URL || "").replace(/\/+$/, "");
   res.setHeader("Access-Control-Allow-Origin", site || "*");
   res.setHeader("Cache-Control", "public, s-maxage=120, stale-while-revalidate=60");

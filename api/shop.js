@@ -2,6 +2,7 @@ import { getSession, botBase, botHeaders } from "../lib/_session.js";
 
 import { readJson, originalPath } from "../lib/_helpers.js";
 
+import { zorunluHttps } from "../lib/_https.js";
 export const STATIC_SHOP = [ {
   id: "premium_30",
   ad: "💎 Premium 30 Gün",
@@ -167,6 +168,7 @@ export const STATIC_SHOP = [ {
 } ];
 
 export default async function handler(req, res) {
+  if (zorunluHttps(req, res)) return;
   const url = new URL(req.url, `https://${req.headers.host}`);
   const op = originalPath(req, url);
   const bBase = botBase();

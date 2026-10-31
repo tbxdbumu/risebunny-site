@@ -4,6 +4,7 @@ import { botBase, botHeaders, getSession } from "../../../lib/_session.js";
 
 import { readJson, originalPath, FB_KEY, PROJECT } from "../../../lib/_helpers.js";
 
+import { zorunluHttps } from "../../../lib/_https.js";
 function randCode(len = 10) {
   const abc = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
   let s = "";
@@ -14,6 +15,7 @@ function randCode(len = 10) {
 const configDocUrl = id => `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents/launcher_configs/${id}?key=${FB_KEY}`;
 
 export default async function handler(req, res) {
+  if (zorunluHttps(req, res)) return;
   const siteOrigin = (process.env.SITE_URL || "").replace(/\/+$/, "");
   if (siteOrigin) {
     res.setHeader("Access-Control-Allow-Origin", siteOrigin);

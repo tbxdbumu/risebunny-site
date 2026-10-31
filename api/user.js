@@ -2,6 +2,7 @@ import { getSession, botBase, botHeaders } from "../lib/_session.js";
 
 import { readJson, originalPath } from "../lib/_helpers.js";
 
+import { zorunluHttps } from "../lib/_https.js";
 function isStaffSession(s) {
   const ids = String(process.env.ADMIN_UIDS || "").split(",").map(x => x.trim()).filter(Boolean);
   const discordIds = String(process.env.ADMIN_DISCORD_IDS || "").split(",").map(x => x.trim()).filter(Boolean);
@@ -30,6 +31,7 @@ function safeLink(u) {
 }
 
 export default async function handler(req, res) {
+  if (zorunluHttps(req, res)) return;
   const url = new URL(req.url, `https://${req.headers.host}`);
   const op = originalPath(req, url);
   const bBase = botBase();

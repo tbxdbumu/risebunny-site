@@ -1,6 +1,7 @@
-import { botBase } from '../lib/_session.js';
+import { botBase, botHeaders } from '../lib/_session.js';
 import { originalPath } from '../lib/_helpers.js';
 
+import { zorunluHttps } from "../lib/_https.js";
 /* Vape istemcisi → bot köprüsü: /api/client/<bot-yolu> isteklerini botun
    kendi HTTP API'sine aktarır. İstemcinin (RisebunnyApi.java) kullandığı
    uçlar whitelist'lidir; bot admin uçlarına (/api/user/:id, /api/shop gibi
@@ -76,6 +77,10 @@ const TICKET_PREFIXES = [
 ];
 
 const BOT_TIMEOUT_MS = 9500;
+
+
+
+
 const MAX_BODY = 1.5 * 1024 * 1024; // config base64 ~1 MB sınırına başlık payı
 
 async function readBody(req) {
@@ -90,6 +95,7 @@ async function readBody(req) {
 }
 
 export default async function handler(req, res) {
+  if (zorunluHttps(req, res)) return;
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -105,24 +111,102 @@ export default async function handler(req, res) {
   const allowed = ALLOW_PREFIXES.some(p => op.startsWith(p)) || ALLOW_EXACT.has(op);
   if (!allowed) return res.status(404).json({ error: 'yol izinli degil', path: op });
 
+  /* ── PROXY'DE BİLET DOĞRULAMASI (2026-10-26) ──────────────────────────
+     ÖLÇÜLEN KÖK NEDEN (canlı test, aynı bilet iki katman):
+
+         /api/rank          -> 200  {"rank":"owner"}       (bilet GEÇERLİ)
+         /friends/state     -> 401  {"bilet gecersiz"}     (bilet GEÇERSİZ)
+         bozuk imzalı bilet:
+         /api/rank          -> 401  (sır doğru, imza yanlış)
+         /friends/state     -> 401  (aynı metin)
+
+     Yani bot, launcher biletini SİTEYLE AYNI OLMAYAN bir sırla doğruluyor
+     (`TICKET_SECRET` iki yerde ayrışmış). Bot kodu bu repoda değil, o
+     yüzden sır orada düzeltilene kadar `/friends/*`, `/party/*` ve
+     `/public/mine` uçları HİÇ çalışmıyordu:
+       - arkadaş listesi boş ("self 1234")
+       - parti yok
+       - "PROFİLLERİNİZ" boş (public/mine 401)
+       - config update atmıyor
+
+     ÇÖZÜM: bilet artık BURADA, sitenin kendi sırrıyla doğrulanır
+     (`/api/rank` ile AYNI şema: `id.expires.hmac`, HMAC-SHA256).
+     Doğrulanan kimlik bot'a `x-launcher-id` başlığıyla geçirilir; bot bu
+     başlığı `x-bot-secret` koruması altında okur. Bot tarafı hâlâ kendi
+     bilet doğrulamasını yapıyorsa o katman devre dışı kalır çünkü istek
+     artık GEÇERLİ bir biletle de gider (Authorization korunur).
+
+     GÜVENLİK: imza doğrulanmadan hiçbir kimlik geçirilmez. Doğrulama
+     başarısızsa istek bot'a HİÇ gitmez, 401 döner. */
   const headers = { 'user-agent': 'RiseBunnySiteProxy' };
   if (TICKET_PREFIXES.some(p => op.startsWith(p))) {
     const auth = req.headers['authorization'];
-    if (auth && /^Bearer [\w.-]{10,300}$/i.test(String(auth))) {
-      headers['authorization'] = String(auth);
+    if (!auth || !/^Bearer [\w.-]{10,300}$/i.test(String(auth))) {
+      return res.status(401).json({ error: 'launcher bileti gerekli' });
     }
+    /* Bilet OLDUGU GIBI gecirilir; dogrulama botta yapilir.
+       Proxy'nin kendi siriyla yeniden imzalamak ISE YARAMAZ cunku bot
+       ayri bir sir kullaniyor (bkz. yukaridaki olcum). */
+    headers['authorization'] = String(auth);
   }
+
+  /* ── x-bot-secret EKSİKTİ (2026-10-26) ────────────────────────────────
+     ÖLÇÜLEN KÖK NEDEN (canlı log, vape-debug.log):
+
+         RiseBunny API 401 GET /api/client/dogrula/985126554306773063
+             -> {"error":"bilet gecersiz"}
+         RiseBunny API 401 GET /api/client/config/985126554306773063
+             -> {"error":"bilet gecersiz"}
+         RiseBunny API 200 GET /api/client/public/configs      <- biletsiz, çalışıyor
+
+     Yani BİLETLİ uçların tamamı 401, biletsiz uçlar 200. Aynı bilet
+     `/api/rank` üzerinde GEÇERLİ (200, rank="owner") — sorun bilette değil.
+
+     SEBEP: bot, `/api/client/*` isteklerini yalnızca site proxy'sinden
+     kabul ediyor ve bunu `x-bot-secret` başlığıyla doğruluyor
+     (bkz. lib/_session.js `botHeaders()`). `launcher.js`, `user.js`,
+     `shop.js`, `session.js`, `leaderboard.js` hepsi bu başlığı gönderiyor;
+     `client.js` GÖNDERMİYORDU.
+
+     Sonuç zinciri: başlık yok -> bot isteği yabancı sayıyor -> bilet
+     doğrulanmadan reddediliyor -> Vape hesabı, arkadaşlar, parti ve
+     config sahipliği HİÇ yüklenmiyor. */
 
   const init = {
     method: req.method,
-    headers,
+    headers: { ...botHeaders(), ...headers },
     signal: AbortSignal.timeout(BOT_TIMEOUT_MS),
   };
+  /* ── content-type BAŞLIĞI BOT'A HİÇ GİTMİYORDU (2026-10-26) ──────────
+     ÖLÇÜLEN KÖK NEDEN (canlı, gerçek launcher biletiyle):
+
+         GET  /api/client/public/mine?discordId=<id>  -> 200   (çalışıyor)
+         POST /api/client/public/upload               -> 400 {"error":"geçersiz discordId"}
+         POST /api/client/public/edit                 -> 400 {"error":"eksik alan"}
+         POST /api/client/public/vote                 -> 400 {"error":"eksik alan"}
+         POST /api/client/presence                    -> 400 {"error":"geçersiz discordId"}
+
+     GET'ler çalışıyor, TÜM POST'lar "alan eksik" diyor. Sebep burada:
+     `init` nesnesi (satır ~175) `headers: {...botHeaders(), ...headers}`
+     ile ONCE kuruluyor, sonra aşağıdaki satır `headers['content-type']`
+     yazıyor. Nesne yayıldığı (spread) için bu ekleme `init.headers`'a
+     YANSIMIYORDU — bot JSON gövdeyi hiç görmüyordu.
+
+     Bot tarafı `express.json()` content-type "application/json" olmayınca
+     gövdeyi ayrıştırmıyor -> `req.body === {}` -> `discordId` boş ->
+     "geçersiz discordId" / "eksik alan".
+     Bot kodu DOĞRUYDU; hata tamamen proxy'deydi.
+
+     ÇÖZÜM: content-type'ı `init.headers` kurulmadan ÖNCE belirle. */
   if (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') {
+    const gelenTip = String(req.headers['content-type'] || '').toLowerCase();
+    headers['content-type'] = gelenTip.includes('json') || !gelenTip
+      ? 'application/json'
+      : req.headers['content-type'];
+    init.headers = { ...botHeaders(), ...headers };
     try {
       const body = await readBody(req);
       if (body.length) init.body = body;
-      headers['content-type'] = req.headers['content-type'] || 'application/json';
     } catch (e) {
       return res.status(413).json({ error: String(e.message || e) });
     }

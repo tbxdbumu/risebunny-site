@@ -2,7 +2,9 @@ import { botBase } from "../lib/_session.js";
 
 import { FB_KEY, PROJECT, BOT_ID, originalPath } from "../lib/_helpers.js";
 
+import { zorunluHttps } from "../lib/_https.js";
 export default async function handler(req, res) {
+  if (zorunluHttps(req, res)) return;
   const url = new URL(req.url, `https://${req.headers.host}`);
   const op = originalPath(req, url);
   const bBase = botBase();

@@ -2,7 +2,9 @@ import { safeNext, signState } from "../../../lib/_session.js";
 
 import { CLIENT_ID, siteBase } from "../../../lib/_helpers.js";
 
+import { zorunluHttps } from "../../../lib/_https.js";
 export default function handler(req, res) {
+  if (zorunluHttps(req, res)) return;
   try {
     if (!CLIENT_ID) return res.status(500).send("DISCORD_CLIENT_ID tanımlı değil.");
     const base = siteBase(req);

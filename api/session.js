@@ -2,7 +2,9 @@ import { setSession, getSession, clearSession, botBase, botHeaders } from "../li
 
 import { FB_KEY, readJson, fbCreds, avatarUrl, siteBase, originalPath } from "../lib/_helpers.js";
 
+import { zorunluHttps } from "../lib/_https.js";
 export default async function handler(req, res) {
+  if (zorunluHttps(req, res)) return;
   const url = new URL(req.url, `https://${req.headers.host}`);
   const op = originalPath(req, url);
   if (op === "/api/session" && req.method === "POST") {

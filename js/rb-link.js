@@ -47,7 +47,7 @@
   if (code && !loginFlag()) {
     location.replace(
       "/api/auth/discord/start?device=" + encodeURIComponent(code) +
-      "&next=" + encodeURIComponent("/risebunny?device=" + code)
+      "&next=" + encodeURIComponent("/risebunny-panel?device=" + code)
     );
   }
 

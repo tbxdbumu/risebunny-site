@@ -16,6 +16,52 @@
     });
   }
   window.__rb404 = show404;
+
+  /* ── ölçülen şikayet (2026-11-01) ───────────────────────────────────────
+     KULLANICI: "anasayfa hala önce açılıyor sonra bizim 404 sayfamıza düşüyor".
+     SEBEP: config çekilemediğinde `show404()` çağrılıyor ve TÜM sayfa
+     `404.html` ile değiştiriliyordu. Oysa "Firebase ayarı gelmedi" ile
+     "böyle bir sayfa yok" aynı şey değil; ana sayfa bu yüzden kendi 404
+     sayfasına düşüyordu.
+     ARTIK: altyapı hatası sayfayı EZMEZ. Sağ üstte kapanabilir bir şerit
+     gösterilir, hata konsola yazılır, sayfa olduğu gibi kullanılabilir
+     kalır. Gerçek 404 yalnızca `window.__rb404()` açıkça çağrıldığında
+     (bkz. maintenance/bans akışları) gösterilir. */
+  function showIssue(reason) {
+    try {
+      console.warn("[rb] altyapı hatası, sayfa korunuyor:", reason);
+    } catch (e) {}
+    try {
+      if (document.getElementById("rb-issue")) return;
+      if (!document.body) {
+        document.addEventListener("DOMContentLoaded", function () {
+          showIssue(reason);
+        }, { once: true });
+        return;
+      }
+      var b = document.createElement("div");
+      b.id = "rb-issue";
+      b.setAttribute("role", "status");
+      b.style.cssText = "position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:2147483646;max-width:min(560px,92vw);display:flex;gap:10px;align-items:center;padding:10px 12px 10px 14px;border-radius:12px;background:rgba(28,28,44,.96);border:1px solid rgba(255,180,80,.45);color:#ffe8c8;font:500 13px/1.4 system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.45)";
+      var t = document.createElement("span");
+      t.textContent = "Bağlantı kurulamadı — bazı alanlar geç yüklenebilir.";
+      var x = document.createElement("button");
+      x.type = "button";
+      x.textContent = "×";
+      x.setAttribute("aria-label", "Kapat");
+      x.style.cssText = "background:transparent;border:0;color:#ffe8c8;font-size:18px;line-height:1;cursor:pointer;padding:0 2px";
+      x.addEventListener("click", function () {
+        if (b.parentNode) b.parentNode.removeChild(b);
+      });
+      b.appendChild(t);
+      b.appendChild(x);
+      document.body.appendChild(b);
+      setTimeout(function () {
+        if (b.parentNode) b.parentNode.removeChild(b);
+      }, 12000);
+    } catch (e) {}
+  }
+  window.__rbIssue = showIssue;
   function showMaintenance(msg) {
     if (document.getElementById("rb-maintenance")) return;
     var lang = "en";
@@ -60,19 +106,20 @@
   }
   async function loadFirebaseConfig() {
     try {
-      var resp = await fetch("/api/firebase-config");
-      if (!resp.ok) throw new Error("Failed to load config");
+      var resp = await fetch("/api/firebase-config", { cache: "no-store" });
+      if (!resp.ok) throw new Error("HTTP " + resp.status);
       var cfg = await resp.json();
+      if (!cfg || !cfg.projectId) throw new Error("config eksik");
       window.firebaseConfig = cfg;
       return cfg;
     } catch (e) {
-      show404();
+      showIssue("firebase-config: " + (e && e.message ? e.message : e));
       throw e;
     }
   }
   function init(cfg) {
     if (!window.firebase || !cfg || !cfg.projectId) {
-      show404();
+      showIssue(!window.firebase ? "firebase SDK yüklenmedi" : "projectId yok");
       return;
     }
     if (!firebase.apps.length) firebase.initializeApp(cfg);
@@ -84,6 +131,7 @@
         db.collection("bans").doc(u.uid).get().then(function(snap) {
           if (snap.exists && snap.data().banned === true) {
             auth.signOut();
+            /* Banlı hesap için 404 hâlâ doğru: içeriğe erişim kapatılır. */
             show404();
           }
         }).catch(function() {});

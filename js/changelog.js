@@ -72,7 +72,7 @@
 
       if (v.tag) {
         var et = document.createElement("span");
-        et.className = "pill";
+        et.className = "tl-tag tl-tag-" + v.tag;
         et.textContent = v.tag;
         bas.appendChild(et);
       }
@@ -90,6 +90,8 @@
         h.className = "change-label";
         h.textContent = etiket[tip] || tip;
         blok.appendChild(h);
+        /* tip ayrımı renkle de görünsün (eklendi/değişti/düzeltildi) */
+        blok.classList.add("is-" + tip);
 
         var ul = document.createElement("ul");
         deg[tip].forEach(function (madde) {

@@ -49,21 +49,96 @@ html[data-theme="dark"] .rb-avatar{box-shadow:0 16px 44px rgba(0,34,255,.45),0 0
 
 .rb-badges{display:flex;gap:var(--sp-2);flex-wrap:wrap;margin-top:var(--sp-4)}
 
-/* ana sayfa hero'su: durum rozeti + kod önizlemesi yan yana */
+/* ana sayfa hero'su: durum rozeti + Discord önizlemesi yan yana */
 .hero-split{
-  display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);
+  display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);
   gap:1px;align-items:stretch;margin-top:var(--sp-7);
-  max-width:860px;
+  max-width:880px;
   background:var(--line);
   border:1px solid var(--line);border-radius:var(--r-md);
   overflow:hidden;
 }
-.hero-split > *{background:var(--bg);padding:var(--sp-4)}
-.hero-split .bot-live{margin-top:0;border:0;border-radius:0;padding:0;background:none}
-.hero-code{font-size:var(--fs-xs);border-radius:0;border:0}
-.hero-code .code-body{padding:var(--sp-3) 0;line-height:1.8}
+.hero-split > *{background:var(--bg);padding:var(--sp-5)}
+.hero-split .bot-live{
+  margin-top:0;border:0;border-radius:0;padding:0;background:none;
+  flex-direction:column;align-items:flex-start;gap:var(--sp-3);
+  justify-content:center;
+}
+.hero-split .bot-live img{width:34px;height:34px}
+.hero-split .live-dot{position:absolute;margin-top:22px;margin-left:22px;width:8px;height:8px;box-shadow:0 0 0 2px var(--bg)}
+.hero-split .bot-live{position:relative}
+.hero-split .live-txt b{font-size:var(--fs-base)}
+.hero-split .live-txt span{font-size:var(--fs-2xs)}
+/* sol panel boş durmasın: durum bilgisinin altında tek birincil eylem.
+   Marka rengi burada kullanılır çünkü gerçek eylem bağlantısı. */
+.dc-invite{
+  margin-top:auto;
+  display:inline-flex;align-items:center;justify-content:center;
+  height:34px;padding:0 var(--sp-4);border-radius:var(--r-sm);
+  background:var(--brand);color:#fff;
+  font-size:var(--fs-xs);font-weight:600;letter-spacing:-.005em;
+  text-decoration:none;
+  transition:background var(--d-1) var(--t);
+}
+.dc-invite:hover{background:var(--brand-600)}
+.dc-invite:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+
+/* ── Discord önizlemesi ───────────────────────────────────────────────
+   Gerçek Discord mesaj yapısı: kanal başlığı, yazarlık satırı, gövde,
+   mesaj kutusu. Renk yalnızca marka ve "BOT" etiketinde. */
+.dc-card{
+  display:flex;flex-direction:column;gap:var(--sp-3);
+  background:var(--surface);
+  padding:0;
+}
+.dc-head{
+  display:flex;align-items:center;gap:6px;
+  padding:10px var(--sp-4);
+  border-bottom:1px solid var(--line);
+  font-size:var(--fs-xs);color:var(--muted);font-weight:500;
+}
+.dc-hash{color:var(--faint);font-size:var(--fs-sm)}
+.dc-sep{color:var(--line-2);margin:0 2px}
+.dc-srv{color:var(--faint)}
+.dc-body{display:flex;flex-direction:column;gap:2px;padding:var(--sp-4) var(--sp-4) 0}
+.dc-line{display:flex;align-items:center;gap:8px;margin:0;line-height:1.35}
+.dc-user{color:var(--ink);font-weight:600;font-size:var(--fs-sm)}
+.dc-cmd{
+  font-family:var(--mono);font-size:var(--fs-xs);
+  color:var(--brand-600);background:var(--brand-soft);
+  border-radius:4px;padding:1px 6px;
+}
+html[data-theme="dark"] .dc-cmd{color:var(--brand-300)}
+.dc-bot{
+  display:inline-flex;align-items:center;gap:5px;
+  color:var(--ink);font-weight:600;font-size:var(--fs-sm);
+}
+.dc-tick{
+  display:inline-grid;place-items:center;
+  width:13px;height:13px;border-radius:3px;
+  background:var(--brand);color:#fff;font-size:8px;line-height:1;
+}
+.dc-time{color:var(--faint);font-size:var(--fs-2xs);font-family:var(--mono)}
+.dc-msg{margin:6px 0 0;color:var(--ink);font-size:var(--fs-sm);line-height:1.5}
+.dc-list{
+  list-style:none;display:flex;flex-wrap:wrap;gap:5px;
+  margin:8px 0 0;padding:0;
+}
+.dc-list li{
+  font-size:var(--fs-2xs);color:var(--muted);
+  background:var(--surface-2);
+  border:1px solid var(--line);border-radius:5px;
+  padding:2px 8px;line-height:1.5;
+}
+.dc-input{
+  margin:var(--sp-4) 0 0;
+  border-top:1px solid var(--line);
+  padding:10px var(--sp-4);
+  color:var(--faint);font-size:var(--fs-2xs);
+}
 @media (max-width:820px){
   .hero-split{grid-template-columns:1fr}
+  .hero-split .bot-live{flex-direction:row;align-items:center}
 }
 
 /* top.gg widget'ları */

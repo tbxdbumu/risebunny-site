@@ -1,7 +1,67 @@
 /* RiseBunny — sürüm geçmişi.
    Kaynak: eski changelog.html'in `versions` dizisi (metinler birebir korundu)
-   + MEE6 paritesi sürümü. TR ve EN ayrı alanlarda; site dili neyse o okunur. */
+   + MEE6 paritesi (v2.2.0) + tasarım/temizlik (v2.3.0) sürümleri.
+   TR ve EN ayrı alanlarda; site dili neyse o okunur. */
 window.RB_LOG = [
+  {
+    version: "v2.3.0",
+    date: "2026-11-03",
+    tag: "site",
+    changes: {
+      added: [
+        "Docs yeniden yazıldı: 180 komut / 25 kategori, anlık arama, kategori filtresi, `/` kısayolu",
+        "Arama Türkçe karakter duyarsız: \"cekilis\" yazınca çekiliş komutlarını bulur",
+        "Bot durumu ana sayfada ve bot sayfasında gerçek /api/stats verisinden okunuyor",
+        "Sürüm notları sayfası zaman çizelgesi olarak yeniden yazıldı",
+        "Koyu tema: js/theme.js ile kalıcı tema seçimi, ilk boyamada titreme yok",
+        "Panel artık site ile aynı token katmanından besleniyor"
+      ],
+      changed: [
+        "Tasarım referans çizgisine çekildi: kapsül etiketler, bölüm numaraları ve glow efektleri kaldırıldı",
+        "Kartlar bitişik ızgaraya döndü; hover'da zıplama/gölge yerine yalnızca zemin değişiyor",
+        "Başlık, açıklama ve arama çubuğu aynı hizada; tipografi ölçeği sıkılaştırıldı",
+        "Site ve panel tek marka kaynağına bağlandı (css/tokens.css + css/components.css)",
+        "Alt bilgi sütunları netleşti: Ürün / Kaynak / Topluluk"
+      ],
+      fixed: [
+        "TR/EN düğmesine basınca Discord giriş düğmesinde \"TR EN\" yazısı çıkması",
+        "Bot sayfasındaki özellik kartlarının ve komut simülatörünün hiç çizilmemesi",
+        "Her sayfanın başlığının ana sayfanınkiyle ezilmesi",
+        "Docs sayfasının sol menüsünde iç kaydırma çubuğu çıkması",
+        "Komut satırlarının aşırı seyrek olması: satırlar 65px'ten 39px'e indi",
+        "Kategori emoji'lerinin boş kutu görünmesi (emoji yazı tipi eksikti)",
+        "Alt bilgide \"Rubidium\" ve \"Rubidium Client\" satırlarının tekrarlanması",
+        "Görseller: og.png 8,4 MB → 48 KB, toplam ~10,5 MB → ~173 KB"
+      ]
+    },
+    en: {
+      added: [
+        "Docs rewritten: 180 commands across 25 categories with instant search, category filter and a `/` shortcut",
+        "Accent-insensitive search: typing \"cekilis\" finds giveaway commands",
+        "Bot status on the home and bot pages reads from real /api/stats data",
+        "Changelog page rebuilt as a timeline",
+        "Dark theme: persistent choice via js/theme.js, no flash on first paint",
+        "The panel now draws from the same token layer as the site"
+      ],
+      changed: [
+        "Design moved to a reference-led layout: capsule labels, section numbers and glow effects removed",
+        "Cards sit in one joined grid; hover changes the surface instead of lifting and shadowing",
+        "Title, lead and search bar share one alignment; type scale tightened",
+        "Site and panel share a single brand source (css/tokens.css + css/components.css)",
+        "Footer columns clarified: Product / Resources / Community"
+      ],
+      fixed: [
+        "Clicking TR/EN printed \"TR EN\" inside the Discord login button",
+        "Feature cards and the command simulator never rendered on the bot page",
+        "Every page title was overwritten with the home page title",
+        "Inner scrollbar inside the docs sidebar",
+        "Command rows were far too sparse: 65px down to 39px",
+        "Category emoji rendered as empty boxes (missing emoji font)",
+        "Duplicate \"Rubidium\" and \"Rubidium Client\" footer rows",
+        "Images: og.png 8.4 MB → 48 KB, ~10.5 MB → ~173 KB in total"
+      ]
+    }
+  },
   {
     version: "v2.2.0",
     date: "2026-11-03",
@@ -17,17 +77,17 @@ window.RB_LOG = [
         "Geçici ses hub'ı: oda açılır, boşalınca silinir",
         "Sosyal bildirim: YouTube kanalı ve RSS akışı (varsayılan RSS, kotasız)",
         "Doğum günü kaydı ve canlı kanal sayacı",
-        "Site: ortak tasarım katmanı (tokens + components), koyu panel uyumu",
-        "Site: bot durumu ana sayfada gerçek /api/stats verisinden"
+        "8 yeni kategori: Rol Sistemi, Seviye & XP, Ticket & Transkript, Otomasyon, Ses, Duyuru & Sosyal, Doğum Günü, Sayaç"
       ],
       changed: [
+        "Komut sayısı 165 → 180; kategori sayısı 17 → 25",
         "YouTube tarama kotası koruması: API yerine RSS varsayılan",
-        "Docs artık 180 komut / 25 kategori, aranabilir",
-        "Changelog ve Docs sayfaları ortak stil dosyasına taşındı"
+        "Yeni özellikler ses kanalı olmadan da kurulabiliyor",
+        "Varsayılan bot dili İngilizce, sunucu bazında TR'ye çevrilebiliyor"
       ],
       fixed: [
-        "Banner'ın sabit başlıkla çakışması",
-        "Komut sayısının sayfalar arasında tutarsızlığı (162/165/200)"
+        "YouTube tarama kotası: API anahtarı olmadan da çalışıyor",
+        "Sosyal bildirimlerin sunucu yeniden başlatılınca kaybolması"
       ]
     },
     en: {
@@ -41,17 +101,17 @@ window.RB_LOG = [
         "Temporary voice hub: room created on join, deleted when empty",
         "Social notifications: YouTube channels and RSS feeds (RSS by default, no quota)",
         "Birthday registration and a live channel counter",
-        "Site: shared design layer (tokens + components), dark panel parity",
-        "Site: bot status on the home page from real /api/stats data"
+        "8 new categories: Roles, Levels & XP, Tickets & Transcripts, Automations, Voice, Announcements & Social, Birthdays, Counter"
       ],
       changed: [
+        "Command count 165 → 180; categories 17 → 25",
         "YouTube polling quota guard: RSS is now the default over the API",
-        "Docs now cover 180 commands across 25 categories, searchable",
-        "Changelog and Docs moved onto the shared stylesheet"
+        "New features can be set up without a voice channel",
+        "Default bot language is English; each server can switch to Turkish"
       ],
       fixed: [
-        "Banner colliding with the sticky header",
-        "Command count disagreeing across pages (162/165/200)"
+        "YouTube polling quota: works without an API key",
+        "Social subscriptions being lost on restart"
       ]
     }
   },

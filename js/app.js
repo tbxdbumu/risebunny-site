@@ -98,7 +98,7 @@
       /* marka katmanı + bot kimliği */
       skip: "Skip to content",
       footer_contact: "Contact",
-      nav_arena: "Rubidium Client",
+      nav_arena: "Rubidium V4",
       bot_live_wait: "Checking status…",
       bot_live_on: "Online 24/7",
       bot_live_off: "Status unavailable",
@@ -129,7 +129,7 @@
       log_lead: "What shipped, when. Newest first."
     },
     tr: {
-      nav_arena: "Rubidium Client",
+      nav_arena: "Rubidium V4",
       nav_bot: "Mod Bot",
       nav_sys: "Sistemler",
       nav_faq: "SSS",
@@ -196,7 +196,7 @@
       /* marka katmanı + bot kimliği */
       skip: "İçeriğe geç",
       footer_contact: "İletişim",
-      nav_arena: "Rubidium Client",
+      nav_arena: "Rubidium V4",
       bot_live_wait: "Durum kontrol ediliyor…",
       bot_live_on: "7/24 çevrimiçi",
       bot_live_off: "Durum alınamadı",
@@ -518,6 +518,15 @@
     });
     $$("[data-i18n-ph]").forEach(function(el) {
       el.placeholder = t(el.getAttribute("data-i18n-ph"));
+    });
+    /* Sayfaların bir kısmı metni doğrudan data-tr/data-en ile taşıyor
+       (bot sayfası ve ana sayfa Discord kartı). app.js bunu bilmiyordu,
+       o yüzden TR'de yazılıp EN'e geçince metin değişmiyordu. */
+    $$("[data-tr][data-en]").forEach(function(el) {
+      el.textContent = el.getAttribute(LANG === "tr" ? "data-tr" : "data-en");
+    });
+    $$("[data-tr-ph][data-en-ph]").forEach(function(el) {
+      el.placeholder = el.getAttribute(LANG === "tr" ? "data-tr-ph" : "data-en-ph");
     });
     $$(".lang-btn").forEach(function(b) {
       b.classList.toggle("active", b.getAttribute("data-lang") === LANG);

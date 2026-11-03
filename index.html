@@ -75,44 +75,40 @@
     </div>
 
     <!-- Bot kimliği: gerçek durum /api/stats'tan gelir, yoksa "bağlantı yok" yazar.
-         Uydurma sayı basılmaz. -->
-    <div class="hero-split">
-      <div class="bot-live off" id="bot-live" aria-live="polite">
-        <img src="images/bot.png" alt="RiseBunny Bot" loading="lazy">
-        <span class="live-dot" aria-hidden="true"></span>
-        <span class="live-txt">
-          <b>RiseBunny Bot</b>
-          <span id="bot-live-sub" data-i18n="bot_live_wait">Durum kontrol ediliyor…</span>
-        </span>
-        <a class="dc-invite" href="https://discord.com/api/oauth2/authorize?client_id=1540401487581020252&amp;permissions=8&amp;scope=bot%20applications.commands" target="_blank" rel="noopener" data-i18n="invite">Botu Davet Et</a>
+         Uydurma sayı basılmaz. Tek kart: üstte kimlik + eylem, altta
+         stilize edilmiş tek Discord yanıtı. -->
+    <div class="botcard">
+      <div class="botcard-top">
+        <div class="bot-live off" id="bot-live" aria-live="polite">
+          <span class="live-av">
+            <img src="images/bot.png" alt="RiseBunny Bot" loading="lazy">
+            <i class="live-dot" aria-hidden="true"></i>
+          </span>
+          <span class="live-txt">
+            <b>RiseBunny Bot</b>
+            <span id="bot-live-sub" data-i18n="bot_live_wait">Durum kontrol ediliyor…</span>
+          </span>
+        </div>
+        <a class="botcard-cta" href="https://discord.com/api/oauth2/authorize?client_id=1540401487581020252&amp;permissions=8&amp;scope=bot%20applications.commands" target="_blank" rel="noopener">
+          <i class="fa-brands fa-discord" aria-hidden="true"></i>
+          <span data-i18n="invite">Botu Davet Et</span>
+        </a>
       </div>
 
-      <div class="dc-card" aria-hidden="true">
-        <div class="dc-head">
-          <span class="dc-hash">#</span>
-          <span data-tr="genel" data-en="general">genel</span>
-          <span class="dc-sep">—</span>
-          <span class="dc-srv">RiseBunny</span>
-        </div>
-        <div class="dc-body">
-          <p class="dc-line">
-            <span class="dc-user" data-tr="user" data-en="user">user</span>
-            <span class="dc-cmd">r!help</span>
-          </p>
-          <p class="dc-line">
-            <span class="dc-bot">RiseBunny <span class="dc-tick">✓</span> BOT</span>
-            <span class="dc-time">bugün 21:04</span>
-          </p>
-          <p class="dc-msg" data-tr="25 kategori · 180+ komut" data-en="25 categories · 180+ commands">25 kategori · 180+ komut</p>
-          <ul class="dc-list">
-            <li data-tr="Moderasyon" data-en="Moderation">Moderasyon</li>
-            <li data-tr="Seviye &amp; XP" data-en="Levels &amp; XP">Seviye &amp; XP</li>
-            <li data-tr="Ticket" data-en="Tickets">Ticket</li>
-            <li data-tr="Otomasyon" data-en="Automations">Otomasyon</li>
-            <li data-tr="Tepki rol" data-en="Reaction roles">Tepki rol</li>
-          </ul>
-          <div class="dc-input" data-tr="Mesaj gönder: #genel" data-en="Message #general">Mesaj gönder: #genel</div>
-        </div>
+      <div class="botcard-msg" aria-hidden="true">
+        <p class="bc-row">
+          <span class="bc-user" data-tr="user" data-en="user">user</span>
+          <span class="bc-cmd">r!help</span>
+          <span class="bc-time">21:04</span>
+        </p>
+        <p class="bc-row bc-reply">
+          <span class="bc-tick">✓</span>
+          <span class="bc-name">RiseBunny</span>
+          <span class="bc-tag">BOT</span>
+          <span class="bc-sep" aria-hidden="true"></span>
+          <span class="bc-count" data-tr="25 kategori · 180+ komut" data-en="25 categories · 180+ commands">25 kategori · 180+ komut</span>
+        </p>
+        <p class="bc-cats" data-tr="moderation · levels · tickets · automations · reaction roles" data-en="moderation · levels · tickets · automations · reaction roles">moderation · levels · tickets · automations · reaction roles</p>
       </div>
     </div>
   </div>

@@ -30,10 +30,33 @@
       b.classList.toggle("active", b.getAttribute("data-lang") === LANG);
     });
   }
+  function paintFeats() {
+    var kutu = $("#feat-grid");
+    if (!kutu) return;
+    kutu.innerHTML = FEATS.map(function(f) {
+      return '<div class="feat-card"><div class="fi">' + f.i + "</div><h3>" + (LANG === "tr" ? f.t.tr : f.t.en) + "</h3><p>" + (LANG === "tr" ? f.d.tr : f.d.en) + "</p><code>" + f.c + "</code></div>";
+    }).join("");
+  }
+
   $$(".lang-btn").forEach(function(b) {
     b.addEventListener("click", function() {
       setLang(b.getAttribute("data-lang"));
     });
+  });
+  /* app.js dil değişimini "rb-lang" olayıyla duyuruyor; bu sayfanın kendi
+     çizdiği kartlar o olaydan habersiz kalmasın. */
+  window.addEventListener("rb-lang", function(e) {
+    var l = e && e.detail && e.detail.lang;
+    if (l && l !== LANG) {
+      LANG = l;
+      paintFeats();
+      $$("[data-tr]").forEach(function(el) {
+        var v = el.getAttribute(LANG === "tr" ? "data-tr" : "data-en");
+        if (v !== null) el.textContent = v;
+      });
+      var ph = $("#sim-in");
+      if (ph) ph.placeholder = LANG === "tr" ? "r!yardım yaz ve Enter'a bas…" : "Type r!help and hit Enter…";
+    }
   });
   var burger = $("#burger"), navLinks = $("#nav-links");
   if (burger && navLinks) burger.addEventListener("click", function() {
@@ -176,12 +199,10 @@
     },
     c: "r!ticketayarla #destek"
   } ];
-  $("#feat-grid").innerHTML = FEATS.map(function(f) {
-    return '<div class="feat-card"><div class="fi">' + f.i + "</div><h3>" + (LANG === "tr" ? f.t.tr : f.t.en) + "</h3><p>" + (LANG === "tr" ? f.d.tr : f.d.en) + "</p><code>" + f.c + "</code></div>";
-  }).join("");
+  paintFeats();
   var SIM = [ {
     k: [ "r!yardım", "r!help", "r!yardim" ],
-    t: "📚 **RiseBunny Yardım** — 17 kategori, 162 komut.\n🛡️ moderasyon • 📝 kayıt • 💰 ekonomi • 🔒 koruma • 🎉 çekiliş\nÖrn: `r!param` bakiyeni gösterir."
+    t: "📚 **RiseBunny Yardım** — 25 kategori, 180+ komut.\n🛡️ moderasyon • 📝 kayıt • 💰 ekonomi • 🔒 koruma • 🎉 çekiliş\nÖrn: `r!param` bakiyeni gösterir."
   }, {
     k: [ "r!param", "r!para", "r!balance" ],
     t: "💸 Bakiyen: **12.450** para • 🏦 Banka: **30.000**\nİpucu: `r!günlük-ödül` ile her gün bonus al.\n_(simülasyon — Discord botundaki gerçek bakiyen bot veritabanındadır)_"
@@ -220,7 +241,7 @@
     t: "🖼️ Avatarın: (simülasyonda görsel yok, Discord’da tam boy açılır)"
   }, {
     k: [ "r!istatistik", "r!stats", "r!botbilgi" ],
-    t: "🤖 RiseBunny • 162 komut • 17 kategori\n📡 Gecikme 42ms • ⬆️ Oy: top.gg/bot/" + BOT_ID
+    t: "🤖 RiseBunny • 180+ komut • 25 kategori\n📡 Gecikme 42ms • ⬆️ Oy: top.gg/bot/" + BOT_ID
   } ];
   function simReply(raw) {
     var q = String(raw || "").trim().toLowerCase().replace(/\s+/g, " ");
@@ -231,7 +252,7 @@
       }
     }
     if (q[0] !== "r" && q[0] !== "!") return LANG === "tr" ? "Komutlar `r!` ile başlar. `r!yardım` dene 👆" : "Commands start with `r!`. Try `r!help` 👆";
-    return LANG === "tr" ? "Böyle bir komut bulamadım 🤔 `r!yardım` yazarak 162 komuta göz at." : "No such command 🤔 Type `r!help` to browse all 162 commands.";
+    return LANG === "tr" ? "Böyle bir komut bulamadım 🤔 `r!yardım` yazarak 180+ komuta göz at." : "No such command 🤔 Type `r!help` to browse all 180+ commands.";
   }
   var simLog = $("#sim-log");
   function addMsg(who, text, isBot, scroll) {

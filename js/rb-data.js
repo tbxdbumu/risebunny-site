@@ -49,7 +49,7 @@ window.RB_DATA = function() {
       order: 2,
       name: "Rubidium V4",
       color: "#10b981",
-      image: "images/image.webp",
+      image: "images/image-opt.webp",
       download: "",
       desc: {
         en: "A ghost client for closet players: legit-looking combat modules, in-game ClickGUI and ready configs — Vape V4 and Rise class, free.",

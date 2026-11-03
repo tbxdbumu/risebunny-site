@@ -93,10 +93,43 @@
       btn_download_now: "Get It",
       status_dev: "In the Lab",
       status_project: "Prototype",
-      status_active: "Live 24/7"
+      status_active: "Live 24/7",
+
+      /* marka katmanı + bot kimliği */
+      skip: "Skip to content",
+      footer_contact: "Contact",
+      nav_arena: "Rubidium Client",
+      bot_live_wait: "Checking status…",
+      bot_live_on: "Online 24/7",
+      bot_live_off: "Status unavailable",
+      bot_live_off_sub: "Bot API did not answer",
+      stat_servers: "Servers",
+      stat_users: "Users",
+      stat_cmds: "Commands",
+      stat_loaded: "loaded in bot",
+      stat_votes: "Votes (monthly)",
+      stats_note: "Numbers refresh periodically.",
+      src_live: "● live",
+      src_none: "○ no data",
+
+      /* docs + changelog */
+      invite: "Invite the Bot",
+      f_product: "Product",
+      f_res: "Resources",
+      f_community: "Community",
+      docs_eyebrow: "Reference",
+      docs_title: "Commands",
+      docs_lead: "Find the command you need: pick a category, type in the search box, or just browse. Every command uses the r! prefix; square brackets mark optional arguments.",
+      docs_cats: "Categories",
+      docs_empty: "No results. Try another word.",
+      docs_cta_title: "Want to try the commands?",
+      docs_cta_sub: "Add the bot to your server and test commands in the live simulator.",
+      docs_try: "Open the simulator",
+      log_title: "Changelog",
+      log_lead: "What shipped, when. Newest first."
     },
     tr: {
-      nav_arena: "Rubidium",
+      nav_arena: "Rubidium Client",
       nav_bot: "Mod Bot",
       nav_sys: "Sistemler",
       nav_faq: "SSS",
@@ -158,7 +191,40 @@
       btn_download_now: "İndir",
       status_dev: "Laboratuvarda",
       status_project: "Prototip",
-      status_active: "7/24 Yayında"
+      status_active: "7/24 Yayında",
+
+      /* marka katmanı + bot kimliği */
+      skip: "İçeriğe geç",
+      footer_contact: "İletişim",
+      nav_arena: "Rubidium Client",
+      bot_live_wait: "Durum kontrol ediliyor…",
+      bot_live_on: "7/24 çevrimiçi",
+      bot_live_off: "Durum alınamadı",
+      bot_live_off_sub: "Bot API yanıt vermedi",
+      stat_servers: "Sunucu",
+      stat_users: "Kullanıcı",
+      stat_cmds: "Komut",
+      stat_loaded: "botta yüklü",
+      stat_votes: "Oy (aylık)",
+      stats_note: "Sayılar periyodik olarak tazelenir.",
+      src_live: "● canlı",
+      src_none: "○ veri yok",
+
+      /* docs + changelog */
+      invite: "Botu Davet Et",
+      f_product: "Ürün",
+      f_res: "Kaynak",
+      f_community: "Topluluk",
+      docs_eyebrow: "Referans",
+      docs_title: "Komutlar",
+      docs_lead: "Aradığın komutu bul: kategori seç, aramaya yaz ya da doğrudan listeye göz at. Tüm komutlar r! önekiyle çalışır; köşeli parantezler isteğe bağlı argümanları gösterir.",
+      docs_cats: "Kategoriler",
+      docs_empty: "Sonuç yok. Farklı bir kelime dene.",
+      docs_cta_title: "Komutları denemek ister misin?",
+      docs_cta_sub: "Botu sunucuna ekle, komutları canlı simülasyonda dene.",
+      docs_try: "Simülatörü aç",
+      log_title: "Sürüm Notları",
+      log_lead: "Ne çıktı, ne zaman. En yenisi üstte."
     }
   };
   var RD = window.RB_DATA || {
@@ -438,7 +504,9 @@
       localStorage.setItem("rb-lang", LANG);
     } catch (e) {}
     document.documentElement.lang = LANG;
-    document.title = LANG === "tr" ? "RiseBunny | Sınırların Ötesine Yüksel" : "RiseBunny | Rise Beyond Limits";
+    /* sayfa kendi başlığını taşıyorsa onu kullan; yoksa ana sayfa başlığı */
+    var ozelBaslik = document.documentElement.getAttribute(LANG === "tr" ? "data-title-tr" : "data-title-en");
+    document.title = ozelBaslik || (LANG === "tr" ? "RiseBunny | Sınırların Ötesine Yüksel" : "RiseBunny | Rise Beyond Limits");
     $$("[data-i18n]").forEach(function(el) {
       var v = t(el.getAttribute("data-i18n"));
       if (v) el.textContent = v;
@@ -449,6 +517,9 @@
     $$(".lang-btn").forEach(function(b) {
       b.classList.toggle("active", b.getAttribute("data-lang") === LANG);
     });
+    try {
+      window.dispatchEvent(new CustomEvent("rb-lang", { detail: { lang: LANG } }));
+    } catch (e) {}
     renderSystems();
     renderSSS();
     renderBanner();
@@ -457,7 +528,8 @@
     } catch (e) {}
   }
   window.RB = {
-    setLang: setLang
+    setLang: setLang,
+    get lang() { return LANG; }
   };
   $$(".lang-btn").forEach(function(b) {
     b.addEventListener("click", function() {

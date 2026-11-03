@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" data-theme="dark" data-theme-fixed="1" data-title-tr="Panel · RiseBunny" data-title-en="Panel · RiseBunny">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -7,31 +7,29 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="/images/favicon.ico">
 <link rel="apple-touch-icon" href="/images/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="css/tokens.css?v=1">
 <title>RiseBunny — Brawl Stars</title>
 <style>
+/* Panel tokenları artık css/tokens.css'ten geliyor (html[data-theme="dark"]).
+   Aşağıdaki adlar panelin kendi kısa adları; hepsi ortak değere bağlı.
+   Böylece site ile panel aynı markadan beslenir, panelin düzeni değişmez. */
 :root{
-  --bg:#07070c;
-  --bg-2:#0c0d14;
-  --panel:#101119;
-  --panel-2:#151725;
-  --panel-3:#1b1e2e;
-  --line:#232637;
-  --line-2:#2e3350;
-  --ink:#eef0fa;
-  --muted:#8b90ad;
-  --faint:#565b78;
-  --brand:#0000ff;
-  --brand-2:#4d4dff;
-  --brand-3:#8f8fff;
-  --brand-glow:rgba(77,77,255,.35);
-  --ok:#22c55e;
-  --warn:#f59e0b;
-  --bad:#ef4444;
-  --r-s:8px;
-  --r-m:12px;
-  --r-l:18px;
-  --r-xl:26px;
-  --t:cubic-bezier(.4,0,.2,1);
+  /* panel kısa adları → ortak tokenlar */
+  --bg-2:var(--surface-2);
+  --panel:var(--surface);
+  --panel-2:var(--surface-2);
+  --panel-3:var(--surface-3);
+  --brand-2:var(--brand-400);
+  --brand-3:var(--brand-300);
+  --r-s:var(--r-sm);
+  --r-m:var(--r-md);
+  --r-l:var(--r-lg);
+  --r-xl:var(--r-xl);
+  /* --bg --ink --muted --faint --line --line-2 --brand --ok --warn --bad
+     --brand-glow --t zaten tokens.css'te tanımlı. */
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
@@ -897,7 +895,7 @@ input,select{font-family:inherit;font-size:inherit}
 .main,.nav-list,.console-body{scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
 </style>
 </head>
-<body>
+<body class="panel-body">
 
 <div class="bg-glow"></div>
 

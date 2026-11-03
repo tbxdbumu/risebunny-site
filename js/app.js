@@ -117,6 +117,15 @@
       f_product: "Product",
       f_res: "Resources",
       f_community: "Community",
+      legal_eyebrow: "Legal",
+      legal_privacy: "Privacy",
+      legal_terms: "Terms of Service",
+      legal_updated: "Last updated: November 3, 2026",
+      legal_version: "Version 1.0",
+      privacy_title: "Privacy Policy",
+      privacy_lead: "We wrote down exactly what RiseBunny collects, where it stores it and how you can delete it. Tried to keep it short.",
+      terms_title: "Terms of Service",
+      terms_lead: "Your responsibilities and ours while using RiseBunny. By continuing to use the bot you accept these terms.",
       docs_eyebrow: "Reference",
       docs_title: "Commands",
       docs_lead: "Find the command you need: pick a category, type in the search box, or just browse. Every command uses the r! prefix; square brackets mark optional arguments.",
@@ -215,6 +224,15 @@
       f_product: "Ürün",
       f_res: "Kaynak",
       f_community: "Topluluk",
+      legal_eyebrow: "Yasal",
+      legal_privacy: "Gizlilik",
+      legal_terms: "Kullanım Şartları",
+      legal_updated: "Son güncelleme: 3 Kasım 2026",
+      legal_version: "Sürüm 1.0",
+      privacy_title: "Gizlilik Politikası",
+      privacy_lead: "RiseBunny'nin hangi verileri topladığını, nerede sakladığını ve nasıl silebileceğini açıkça yazdık. Kısa tutmaya çalıştık.",
+      terms_title: "Kullanım Şartları",
+      terms_lead: "RiseBunny'yi kullanırken senin ve bizim sorumluluklarımız. Botu kullanmaya devam ederek bu şartları kabul edersin.",
       docs_eyebrow: "Referans",
       docs_title: "Komutlar",
       docs_lead: "Aradığın komutu bul: kategori seç, aramaya yaz ya da doğrudan listeye göz at. Tüm komutlar r! önekiyle çalışır; köşeli parantezler isteğe bağlı argümanları gösterir.",
@@ -527,6 +545,13 @@
     });
     $$("[data-tr-ph][data-en-ph]").forEach(function(el) {
       el.placeholder = el.getAttribute(LANG === "tr" ? "data-tr-ph" : "data-en-ph");
+    });
+    /* Hukuki sayfalar (gizlilik / kullanım şartları) metni iki dilde
+       ayrı blok olarak taşıyor: data-i18n-block="privacy-tr" / "-en".
+       Yalnızca seçili dilin bloğu görünür. */
+    $$("[data-i18n-block]").forEach(function(el) {
+      var ad = el.getAttribute("data-i18n-block") || "";
+      el.hidden = ad.slice(-2) !== LANG;
     });
     $$(".lang-btn").forEach(function(b) {
       b.classList.toggle("active", b.getAttribute("data-lang") === LANG);

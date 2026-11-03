@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="light" data-title-tr="Gizlilik Politikası · RiseBunny" data-title-en="Privacy Policy · RiseBunny">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" type="image/svg+xml" href="images/bot.svg">
+<link rel="alternate icon" type="image/png" href="images/bot.png">
+<title>Gizlilik Politikası · RiseBunny</title>
+<meta name="description" content="RiseBunny hangi verileri toplar, nerede saklar, ne kadar süre tutar ve nasıl silersin. Açık ve kısa.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://risebunny.vercel.app/privacy">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RiseBunny Software">
+<meta property="og:title" content="Gizlilik Politikası · RiseBunny">
+<meta property="og:url" content="https://risebunny.vercel.app/privacy">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<script>/* tema, ilk boyamadan önce: titreme yok */(function(){try{var t=localStorage.getItem('rb-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/styles.css?v=14">
+<style>
+  .legal{max-width:var(--w-doc);margin:0 auto;padding:0 var(--sp-5) var(--sp-8)}
+  .legal h2{margin:var(--sp-7) 0 var(--sp-3);font-size:var(--fs-lg);font-weight:600;letter-spacing:-.01em}
+  .legal h2:first-child{margin-top:var(--sp-5)}
+  .legal h3{margin:var(--sp-5) 0 var(--sp-2);font-size:var(--fs-base);font-weight:600}
+  .legal p,.legal li{color:var(--muted);font-size:var(--fs-base);line-height:1.7;text-wrap:pretty}
+  .legal p{margin:0 0 var(--sp-3)}
+  .legal ul{margin:0 0 var(--sp-3);padding-left:1.15em}
+  .legal li{margin-bottom:var(--sp-1)}
+  .legal strong{color:var(--text);font-weight:600}
+  .legal code{font-family:var(--mono);font-size:.92em;background:var(--soft);padding:1px 5px;border-radius:4px;color:var(--text)}
+  .legal-meta{display:flex;gap:var(--sp-4);flex-wrap:wrap;margin-top:var(--sp-3);color:var(--faint);font-size:var(--fs-sm)}
+  .legal-note{margin-top:var(--sp-6);padding:var(--sp-4);border:1px solid var(--line);border-radius:8px;background:var(--soft)}
+  .legal-note p:last-child{margin-bottom:0}
+  @media(max-width:640px){.legal{padding-inline:var(--sp-4)}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">İçeriğe geç</a>
+
+<header class="site-header">
+  <div class="header-in">
+    <a href="index.html" class="logo" aria-label="RiseBunny">
+      <img src="images/bot.svg" alt="" width="28" height="28">
+      <span>RiseBunny</span>
+    </a>
+    <nav class="nav-links" id="nav-links" aria-label="Ana menü">
+      <a href="risebunny.html" data-i18n="nav_bot">RiseBunny Bot</a>
+      <a href="docs.html" data-i18n="nav_docs">Komutlar</a>
+      <a href="changelog.html" data-i18n="nav_changelog">Sürümler</a>
+      <a href="/rubidium">Rubidium V4</a>
+      <a href="index.html#sss" data-i18n="nav_faq">SSS</a>
+    </nav>
+    <div class="header-side">
+      <div class="lang-toggle" role="group" aria-label="Dil / Language">
+        <button type="button" class="lang-btn active" data-lang="tr"><span class="flag-t flag-tr" aria-hidden="true">TR</span></button>
+        <button type="button" class="lang-btn" data-lang="en"><span class="flag-t flag-gb" aria-hidden="true">EN</span></button>
+      </div>
+      <a href="https://discord.com/api/oauth2/authorize?client_id=1540401487581020252&amp;permissions=8&amp;scope=bot%20applications.commands" class="btn sm solid" target="_blank" rel="noopener" data-i18n="invite">Botu Davet Et</a>
+      <button type="button" class="burger" id="burger" aria-label="Menü" aria-expanded="false"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<section class="section page-top">
+  <div class="page-head">
+    <p class="eyebrow"><span class="dot" aria-hidden="true"></span><span data-i18n="legal_eyebrow">Yasal</span></p>
+    <h1 class="page-title" data-i18n="privacy_title">Gizlilik Politikası</h1>
+    <p class="page-lead" data-i18n="privacy_lead">RiseBunny'nin hangi verileri topladığını, nerede sakladığını ve nasıl silebileceğini açıkça yazdık. Kısa tutmaya çalıştık.</p>
+    <div class="legal-meta">
+      <span data-i18n="legal_updated">Son güncelleme: 3 Kasım 2026</span>
+      <span data-i18n="legal_version">Sürüm 1.0</span>
+    </div>
+  </div>
+
+  <div class="legal" data-i18n-block="privacy-tr">
+    <h2>1. Kısa özet</h2>
+    <p>RiseBunny bir Discord botudur. Sunucuya eklendiğinde, sana hizmet verebilmek için sınırlı miktarda veri işler. <strong>Mesaj metinlerini kalıcı olarak saklamayız</strong>, reklam ağı yoktur, veriyi satmayız ve yapay zekâ modeli eğitmek için kullanmayız.</p>
+
+    <h2>2. Hangi verileri işliyoruz</h2>
+    <h3>2.1 Kimlik verileri</h3>
+    <ul>
+      <li>Discord kullanıcı kimliği (ID) ve sunucu kimliği (ID)</li>
+      <li>Kullanıcı adı — yalnızca kayıt, isim değişikliği ve moderasyon loglarında</li>
+      <li>Sunucu içindeki roller ve kanal kimlikleri (yetki kontrolü için)</li>
+    </ul>
+
+    <h3>2.2 Bot kullanım verileri</h3>
+    <ul>
+      <li>Seviye sistemi: mesaj sayısı, XP puanı, seviye</li>
+      <li>Ekonomi: bakiye, envanter, en son günlük ödül zamanı</li>
+      <li>Kayıt sistemi: kayıtlı isim, yaş (yalnızca yetkilinin girdiği değer), isim geçmişi</li>
+      <li>Tercihler: dil seçimi, veri işleme onayı</li>
+      <li>Otomasyon ve ayarlar: sunucu yöneticisinin kurduğu kanal, rol ve eşik değerleri</li>
+    </ul>
+
+    <h3>2.3 Mesaj içeriği</h3>
+    <p>Mesaj metinleri <strong>kalıcı olarak saklanmaz</strong>. İçerik yalnızca şu durumlarda o anlık işlenir:</p>
+    <ul>
+      <li>Sunucu yöneticisinin açtığı spam, küfür veya reklam filtresi devrede olduğunda (mesaj silinir, metin saklanmaz)</li>
+      <li>Tanımlı öneyle başlayan bir bot komutu</li>
+      <li>Botu etiketleyerek veya botun mesajına yanıt vererek soru sorduğunda</li>
+      <li>Çekilişe katılım sırasında</li>
+    </ul>
+    <p>Bu işlem bittikten sonra mesaj metni hafızadan düşer. Sunucu yöneticisi filtresini kapatırsa bot mesajları incelemez.</p>
+
+    <h2>3. Verileri nerede saklıyoruz</h2>
+    <p>Sunucu ayarları ve kullanıcı verileri, botun kendi barındırdığı veritabanında tutulur. Veriler <strong>üçüncü taraflara satılmaz, kiralanmaz veya paylaşılmaz</strong>. Reklam ağı, izleme pikseli veya satış yoktur.</p>
+
+    <h2>4. Ne kadar süre saklıyoruz</h2>
+    <ul>
+      <li>Sunucu ayarları: bot sunucudan çıkarılana kadar</li>
+      <li>Kullanıcı verileri (XP, bakiye, kayıt): silme talebine kadar</li>
+      <li>Geçici cooldown ve benzeri teknik kayıtlar: dakikalar ile birkaç gün</li>
+      <li>Moderasyon logları: sunucu yöneticisinin belirlediği süre</li>
+    </ul>
+
+    <h2>5. Yapay zekâ</h2>
+    <p>Sunucu içindeki yapay zekâ destek asistanı, yalnızca o an sorduğun soruyu işler ve sunucunun kendi SSS verisinden yanıt üretir. <strong>Mesajların hiçbir modeli eğitmek için kullanılmaz</strong>, eğitim verisi olarak dışarı aktarılmaz ve konuşma geçmişi model eğitimi için saklanmaz.</p>
+
+    <h2>6. Onayın</h2>
+    <p>Botu ilk kullandığında bir onay paneli gösterilir. Onay vermezsen bot komutlarını çalıştırmaz ve mesajlarını işlemez. Onay verdiysen, bu politikayı kabul etmiş sayılırsın.</p>
+    <p>Onayını geri çekmek için <code>r!sıfırla</code> komutunu kullan veya aşağıdaki destek sunucusundan bizimle iletişime geç.</p>
+
+    <h2>7. Hakların</h2>
+    <p>Hakkında tuttuğumuz verileri görmek, düzeltmek veya silmek için bize ulaşman yeterli. Talebin geldiğinde:</p>
+    <ul>
+      <li>Verilerini en geç <strong>30 gün içinde</strong> sileriz</li>
+      <li>Silinen veriler yedeklerden de temizlenir</li>
+      <li>Daha önce hiçbir veri paylaşılmadığı için geri çekilecek bir paylaşım olmaz</li>
+    </ul>
+
+    <h2>8. Çocukların gizliliği</h2>
+    <p>Bot, Discord'un kendi yaş şartlarına tabidir. Discord kullanım şartlarına uygun olmayan kullanıcılardan bilerek veri toplamayız.</p>
+
+    <h2>9. Değişiklikler</h2>
+    <p>Bu politikayı güncellersek bu sayfada yayınlarız ve üstteki sürüm numarasını artırırız. Önemli bir değişiklik olduğunda destek sunucusundan duyururuz.</p>
+
+    <h2>10. İletişim</h2>
+    <p>Gizlilikle ilgili her soru, talep veya şikâyet için:</p>
+    <ul>
+      <li>Destek sunucusu: <a href="https://dsc.gg/risebunny" target="_blank" rel="noopener">dsc.gg/risebunny</a></li>
+    </ul>
+
+    <div class="legal-note">
+      <p><strong>Not:</strong> Bu politika, kişisel verilerin işlenmesiyle ilgili genel ilkeleri açıklar. Kesin hukuki tavsiye değildir. Yasal bir uyuşmazlık durumunda kendi ülkenin veri koruma mevzuatı esas alınır.</p>
+    </div>
+  </div>
+
+  <div class="legal" data-i18n-block="privacy-en" hidden>
+    <h2>1. Summary</h2>
+    <p>RiseBunny is a Discord bot. When it is added to your server, it processes a limited amount of data to provide the service. <strong>We do not permanently store message text</strong>, there is no ad network, we do not sell data and we do not use it to train AI models.</p>
+
+    <h2>2. Data we process</h2>
+    <h3>2.1 Identity data</h3>
+    <ul>
+      <li>Discord user ID and server (guild) ID</li>
+      <li>Username — only in registration, nickname changes and moderation logs</li>
+      <li>Roles and channel IDs inside the server (for permission checks)</li>
+    </ul>
+
+    <h3>2.2 Usage data</h3>
+    <ul>
+      <li>Level system: message count, XP, level</li>
+      <li>Economy: balance, inventory, last daily reward time</li>
+      <li>Registration: registered name, age (only the value an admin entered), name history</li>
+      <li>Preferences: language choice, data processing consent</li>
+      <li>Automation and settings: channels, roles and thresholds an admin configured</li>
+    </ul>
+
+    <h3>2.3 Message content</h3>
+    <p>Message text is <strong>never stored permanently</strong>. Content is processed only in these cases:</p>
+    <ul>
+      <li>When a server admin enabled the spam, profanity or invite filter (the message is deleted, text is not stored)</li>
+      <li>When a message starts with the configured command prefix</li>
+      <li>When you ask a question by mentioning the bot or replying to its message</li>
+      <li>When you enter a giveaway</li>
+    </ul>
+    <p>The text is dropped from memory once processing finishes. If the admin turns the filters off, the bot does not inspect messages.</p>
+
+    <h2>3. Where we store data</h2>
+    <p>Server settings and user data are kept in the bot's own database. Data is <strong>never sold, rented or shared</strong> with third parties. There are no ad networks, tracking pixels or sales.</p>
+
+    <h2>4. Retention</h2>
+    <ul>
+      <li>Server settings: until the bot is removed from the server</li>
+      <li>User data (XP, balance, registration): until you request deletion</li>
+      <li>Temporary cooldown and similar technical records: minutes to a few days</li>
+      <li>Moderation logs: the period set by the server admin</li>
+    </ul>
+
+    <h2>5. AI</h2>
+    <p>The in-server AI support assistant processes only the question you ask at that moment and answers using the server's own FAQ data. <strong>Your messages are never used to train any model</strong>, are not exported as training data and conversation history is not kept for model training.</p>
+
+    <h2>6. Your consent</h2>
+    <p>When you first use the bot you are shown a consent panel. Without consent the bot will not run commands or process your messages. By giving consent you accept this policy.</p>
+    <p>To withdraw consent, use <code>r!sıfırla</code> or contact us via the support server below.</p>
+
+    <h2>7. Your rights</h2>
+    <p>To view, correct or delete the data we hold about you, just contact us. When you do:</p>
+    <ul>
+      <li>We delete your data within <strong>30 days</strong></li>
+      <li>Deleted data is also removed from backups</li>
+      <li>Since no data was ever shared, there is nothing to recall elsewhere</li>
+    </ul>
+
+    <h2>8. Children's privacy</h2>
+    <p>The bot follows Discord's own age requirements. We do not knowingly collect data from users who do not meet Discord's Terms of Service.</p>
+
+    <h2>9. Changes</h2>
+    <p>If we update this policy we publish it on this page and bump the version number above. Significant changes are announced in the support server.</p>
+
+    <h2>10. Contact</h2>
+    <p>For any privacy question, request or complaint:</p>
+    <ul>
+      <li>Support server: <a href="https://dsc.gg/risebunny" target="_blank" rel="noopener">dsc.gg/risebunny</a></li>
+    </ul>
+
+    <div class="legal-note">
+      <p><strong>Note:</strong> This policy describes general principles for processing personal data. It is not legal advice. In case of a legal dispute, the data protection law of your own country applies.</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-in">
+    <div class="footer-top">
+      <div class="footer-brand">RiseBunny<small data-i18n="footer_slogan">Rise Beyond Limits.</small></div>
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h5 data-i18n="f_product">Ürün</h5>
+          <a href="risebunny.html">RiseBunny Bot</a>
+          <a href="/rubidium">Rubidium V4</a>
+          <a href="index.html">RiseBunny Software</a>
+        </div>
+        <div class="footer-col">
+          <h5 data-i18n="f_res">Kaynak</h5>
+          <a href="docs.html">Docs</a>
+          <a href="changelog.html">Changelog</a>
+          <a href="https://top.gg/bot/1540401487581020252" target="_blank" rel="noopener">top.gg</a>
+        </div>
+        <div class="footer-col">
+          <h5 data-i18n="f_community">Topluluk</h5>
+          <a href="https://dsc.gg/risebunny" target="_blank" rel="noopener">Discord</a>
+          <a href="privacy.html" data-i18n="legal_privacy">Gizlilik</a>
+          <a href="terms.html" data-i18n="legal_terms">Kullanım Şartları</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-base">
+      <span data-i18n="copyright">© 2026 RiseBunny. All rights reserved.</span>
+      <span class="slogan" data-i18n="footer_slogan">Rise Beyond Limits.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/app.js"></script>
+</body>
+</html>

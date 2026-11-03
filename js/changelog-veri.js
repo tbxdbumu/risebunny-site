@@ -1,71 +1,14 @@
 /* RiseBunny — sürüm geçmişi.
-   Kaynak: eski changelog.html'in `versions` dizisi (metinler birebir korundu)
-   + MEE6 paritesi (v2.2.0) + tasarım/temizlik (v2.3.0) sürümleri.
+   Kaynak: eski changelog.html'in `versions` dizisi (metinler birebir korundu).
+   v2.3.0 aynı gün çıkan bot (MEE6 paritesi) ve site (tasarım,
+   düzeltmeler) değişikliklerini tek kayıtta toplar — aynı gün için
+   ayrı kayıt açılmıyor.
    TR ve EN ayrı alanlarda; site dili neyse o okunur. */
 window.RB_LOG = [
   {
     version: "v2.3.0",
     date: "2026-11-03",
-    tag: "site",
-    changes: {
-      added: [
-        "Docs yeniden yazıldı: 180 komut / 25 kategori, anlık arama, kategori filtresi, `/` kısayolu",
-        "Arama Türkçe karakter duyarsız: \"cekilis\" yazınca çekiliş komutlarını bulur",
-        "Bot durumu ana sayfada ve bot sayfasında gerçek /api/stats verisinden okunuyor",
-        "Sürüm notları sayfası zaman çizelgesi olarak yeniden yazıldı",
-        "Koyu tema: js/theme.js ile kalıcı tema seçimi, ilk boyamada titreme yok",
-        "Panel artık site ile aynı token katmanından besleniyor"
-      ],
-      changed: [
-        "Tasarım referans çizgisine çekildi: kapsül etiketler, bölüm numaraları ve glow efektleri kaldırıldı",
-        "Kartlar bitişik ızgaraya döndü; hover'da zıplama/gölge yerine yalnızca zemin değişiyor",
-        "Başlık, açıklama ve arama çubuğu aynı hizada; tipografi ölçeği sıkılaştırıldı",
-        "Site ve panel tek marka kaynağına bağlandı (css/tokens.css + css/components.css)",
-        "Alt bilgi sütunları netleşti: Ürün / Kaynak / Topluluk"
-      ],
-      fixed: [
-        "TR/EN düğmesine basınca Discord giriş düğmesinde \"TR EN\" yazısı çıkması",
-        "Bot sayfasındaki özellik kartlarının ve komut simülatörünün hiç çizilmemesi",
-        "Her sayfanın başlığının ana sayfanınkiyle ezilmesi",
-        "Docs sayfasının sol menüsünde iç kaydırma çubuğu çıkması",
-        "Komut satırlarının aşırı seyrek olması: satırlar 65px'ten 39px'e indi",
-        "Kategori emoji'lerinin boş kutu görünmesi (emoji yazı tipi eksikti)",
-        "Alt bilgide \"Rubidium\" ve \"Rubidium Client\" satırlarının tekrarlanması",
-        "Görseller: og.png 8,4 MB → 48 KB, toplam ~10,5 MB → ~173 KB"
-      ]
-    },
-    en: {
-      added: [
-        "Docs rewritten: 180 commands across 25 categories with instant search, category filter and a `/` shortcut",
-        "Accent-insensitive search: typing \"cekilis\" finds giveaway commands",
-        "Bot status on the home and bot pages reads from real /api/stats data",
-        "Changelog page rebuilt as a timeline",
-        "Dark theme: persistent choice via js/theme.js, no flash on first paint",
-        "The panel now draws from the same token layer as the site"
-      ],
-      changed: [
-        "Design moved to a reference-led layout: capsule labels, section numbers and glow effects removed",
-        "Cards sit in one joined grid; hover changes the surface instead of lifting and shadowing",
-        "Title, lead and search bar share one alignment; type scale tightened",
-        "Site and panel share a single brand source (css/tokens.css + css/components.css)",
-        "Footer columns clarified: Product / Resources / Community"
-      ],
-      fixed: [
-        "Clicking TR/EN printed \"TR EN\" inside the Discord login button",
-        "Feature cards and the command simulator never rendered on the bot page",
-        "Every page title was overwritten with the home page title",
-        "Inner scrollbar inside the docs sidebar",
-        "Command rows were far too sparse: 65px down to 39px",
-        "Category emoji rendered as empty boxes (missing emoji font)",
-        "Duplicate \"Rubidium\" and \"Rubidium Client\" footer rows",
-        "Images: og.png 8.4 MB → 48 KB, ~10.5 MB → ~173 KB in total"
-      ]
-    }
-  },
-  {
-    version: "v2.2.0",
-    date: "2026-11-03",
-    tag: "bot",
+    tag: "site+bot",
     changes: {
       added: [
         "Tepki rol: butonlu ve emojili paneller, tek/çok seçim",
@@ -77,17 +20,38 @@ window.RB_LOG = [
         "Geçici ses hub'ı: oda açılır, boşalınca silinir",
         "Sosyal bildirim: YouTube kanalı ve RSS akışı (varsayılan RSS, kotasız)",
         "Doğum günü kaydı ve canlı kanal sayacı",
-        "8 yeni kategori: Rol Sistemi, Seviye & XP, Ticket & Transkript, Otomasyon, Ses, Duyuru & Sosyal, Doğum Günü, Sayaç"
+        "8 yeni kategori: Rol Sistemi, Seviye & XP, Ticket & Transkript, Otomasyon, Ses, Duyuru & Sosyal, Doğum Günü, Sayaç",
+        "Docs yeniden yazıldı: 180 komut / 25 kategori, anlık arama, kategori filtresi, `/` kısayolu",
+        "Bot durumu ana sayfada ve bot sayfasında gerçek /api/stats verisinden okunuyor",
+        "Sürüm notları sayfası zaman çizelgesi olarak yeniden yazıldı",
+        "Koyu tema: js/theme.js ile kalıcı tema seçimi, ilk boyamada titreme yok",
+        "Panel artık site ile aynı token katmanından besleniyor",
+        "Dil seçicide gerçek TR ve Birleşik Krallık bayrakları; seçili dil kart gibi kalkıyor"
       ],
       changed: [
         "Komut sayısı 165 → 180; kategori sayısı 17 → 25",
         "YouTube tarama kotası koruması: API yerine RSS varsayılan",
         "Yeni özellikler ses kanalı olmadan da kurulabiliyor",
-        "Varsayılan bot dili İngilizce, sunucu bazında TR'ye çevrilebiliyor"
+        "Varsayılan bot dili İngilizce, sunucu bazında TR'ye çevrilebiliyor",
+        "Tasarım referans çizgisine çekildi: kapsül etiketler, bölüm numaraları ve glow efektleri kaldırıldı",
+        "Kartlar bitişik ızgaraya döndü; hover'da zıplama/gölge yerine yalnızca zemin değişiyor",
+        "Site ve panel tek marka kaynağına bağlandı (css/tokens.css + css/components.css)",
+        "Ana sayfadaki Discord önizlemesi yeniden yazıldı: kanal başlığı, yazar satırı, BOT etiketi, saat ve mesaj kutusu",
+        "Önizlemedeki boş alan doldu: canlı durum ve Botu Davet Et düğmesi",
+        "Alt bilgi üç sütuna indi: Ürün / Kaynak / Topluluk; ana sayfa ve Rubidium aynı yapıya geçti"
       ],
       fixed: [
         "YouTube tarama kotası: API anahtarı olmadan da çalışıyor",
-        "Sosyal bildirimlerin sunucu yeniden başlatılınca kaybolması"
+        "Sosyal bildirimlerin sunucu yeniden başlatılınca kaybolması",
+        "TR/EN düğmesine basınca Discord giriş düğmesinde \"TR EN\" yazısı çıkması",
+        "Bot sayfasındaki özellik kartlarının ve komut simülatörünün hiç çizilmemesi",
+        "Her sayfanın başlığının ana sayfanınkiyle ezilmesi",
+        "Docs: son 8 kategorinin bozuk emoji'leri ve \"0 komut\" görünmesi",
+        "Kategori emoji'lerinin boş kutu görünmesi (emoji yazı tipi eksikti)",
+        "Alt bilgide \"Rubidium\" ve \"Rubidium Client\" satırlarının tekrarlanması",
+        "Bot sayfasındaki 8 kart 4 sütuna alındı; ızgarada boş hücre kalmadı",
+        "Rubidium menü bağlantıları temiz /rubidium adresine gidiyor; eski /rubidium.html yönlendiriyor",
+        "Panelde bozuk ∞ işareti"
       ]
     },
     en: {
@@ -101,17 +65,38 @@ window.RB_LOG = [
         "Temporary voice hub: room created on join, deleted when empty",
         "Social notifications: YouTube channels and RSS feeds (RSS by default, no quota)",
         "Birthday registration and a live channel counter",
-        "8 new categories: Roles, Levels & XP, Tickets & Transcripts, Automations, Voice, Announcements & Social, Birthdays, Counter"
+        "8 new categories: Roles, Levels & XP, Tickets & Transcripts, Automations, Voice, Announcements & Social, Birthdays, Counter",
+        "Docs rewritten: 180 commands across 25 categories with instant search, category filter and a `/` shortcut",
+        "Bot status on the home and bot pages reads from real /api/stats data",
+        "Changelog page rebuilt as a timeline",
+        "Dark theme: persistent choice via js/theme.js, no flash on first paint",
+        "The panel now draws from the same token layer as the site",
+        "Real TR and UK flags in the language switcher; the selected language lifts like a card"
       ],
       changed: [
         "Command count 165 → 180; categories 17 → 25",
         "YouTube polling quota guard: RSS is now the default over the API",
         "New features can be set up without a voice channel",
-        "Default bot language is English; each server can switch to Turkish"
+        "Default bot language is English; each server can switch to Turkish",
+        "Design moved to a reference-led layout: capsule labels, section numbers and glow effects removed",
+        "Cards sit in one joined grid; hover changes the surface instead of lifting and shadowing",
+        "Site and panel share a single brand source (css/tokens.css + css/components.css)",
+        "The home page Discord preview was rebuilt: channel header, author line, BOT tag, timestamp and message box",
+        "The empty half of the preview now carries live status and an Invite the Bot button",
+        "Footer reduced to three columns: Product / Resources / Community; home and Rubidium now match"
       ],
       fixed: [
         "YouTube polling quota: works without an API key",
-        "Social subscriptions being lost on restart"
+        "Social subscriptions being lost on restart",
+        "Clicking TR/EN printed \"TR EN\" inside the Discord login button",
+        "Feature cards and the command simulator never rendered on the bot page",
+        "Every page title was overwritten with the home page title",
+        "Docs: broken emoji and \"0 commands\" rows in the last eight categories",
+        "Category emoji rendered as empty boxes (missing emoji font)",
+        "Duplicate \"Rubidium\" and \"Rubidium Client\" footer rows",
+        "The eight bot feature cards now use four columns, so the grid leaves no empty cell",
+        "Rubidium links point at the clean /rubidium route; the old /rubidium.html redirects",
+        "Broken ∞ glyph in the panel"
       ]
     }
   },

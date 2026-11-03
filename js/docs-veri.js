@@ -1,11 +1,13 @@
-/* Üretildi: docs-uret.js (kaynak docs.html + MEE6 paritesi). Elle düzenleme. */
+/* RiseBunny — komut referansı verisi.
+   Kaynak: eski docs.html + MEE6 paritesi kategorileri.
+   İki dilli: her komutun tr/en açıklaması ve kullanımı var. */
 window.RB_DOCS = {
  "surum": 2,
  "toplam": 180,
  "kategoriler": [
   {
    "id": "user",
-   "emoji": "\ud83d",
+   "emoji": "👤",
    "tr": "Kullanıcı",
    "en": "User",
    "komutlar": [
@@ -94,7 +96,7 @@ window.RB_DOCS = {
   },
   {
    "id": "moderation",
-   "emoji": "\ud83d",
+   "emoji": "🛡️",
    "tr": "Moderasyon",
    "en": "Moderation",
    "komutlar": [
@@ -201,7 +203,7 @@ window.RB_DOCS = {
   },
   {
    "id": "register",
-   "emoji": "\ud83d",
+   "emoji": "📝",
    "tr": "Kayıt",
    "en": "Registration",
    "komutlar": [
@@ -281,7 +283,7 @@ window.RB_DOCS = {
   },
   {
    "id": "ai",
-   "emoji": "\ud83e",
+   "emoji": "🤖",
    "tr": "Yapay Zeka",
    "en": "AI",
    "komutlar": [
@@ -388,7 +390,7 @@ window.RB_DOCS = {
   },
   {
    "id": "protection",
-   "emoji": "\ud83d",
+   "emoji": "🔒",
    "tr": "Koruma",
    "en": "Protection",
    "komutlar": [
@@ -567,7 +569,7 @@ window.RB_DOCS = {
   },
   {
    "id": "logo",
-   "emoji": "\ud83c",
+   "emoji": "🎨",
    "tr": "Logo",
    "en": "Logo",
    "komutlar": [
@@ -611,7 +613,7 @@ window.RB_DOCS = {
   },
   {
    "id": "giveaway",
-   "emoji": "\ud83c",
+   "emoji": "🎉",
    "tr": "Çekiliş",
    "en": "Giveaway",
    "komutlar": [
@@ -655,7 +657,7 @@ window.RB_DOCS = {
   },
   {
    "id": "ticket",
-   "emoji": "\ud83c",
+   "emoji": "🎫",
    "tr": "Ticket",
    "en": "Ticket",
    "komutlar": [
@@ -681,7 +683,7 @@ window.RB_DOCS = {
   },
   {
    "id": "economy",
-   "emoji": "\ud83d",
+   "emoji": "💰",
    "tr": "Ekonomi",
    "en": "Economy",
    "komutlar": [
@@ -1021,7 +1023,7 @@ window.RB_DOCS = {
   },
   {
    "id": "premium",
-   "emoji": "\ud83d",
+   "emoji": "💎",
    "tr": "Premium",
    "en": "Premium",
    "komutlar": [
@@ -1101,7 +1103,7 @@ window.RB_DOCS = {
   },
   {
    "id": "fun",
-   "emoji": "\ud83c",
+   "emoji": "🎮",
    "tr": "Eğlence",
    "en": "Fun",
    "komutlar": [
@@ -1181,7 +1183,7 @@ window.RB_DOCS = {
   },
   {
    "id": "invite",
-   "emoji": "\ud83d",
+   "emoji": "📨",
    "tr": "Davet",
    "en": "Invite",
    "komutlar": [
@@ -1270,7 +1272,7 @@ window.RB_DOCS = {
   },
   {
    "id": "general",
-   "emoji": "\ud83c",
+   "emoji": "🌐",
    "tr": "Genel",
    "en": "General",
    "komutlar": [
@@ -1476,7 +1478,7 @@ window.RB_DOCS = {
   },
   {
    "id": "chat",
-   "emoji": "\ud83d",
+   "emoji": "💬",
    "tr": "Sohbet",
    "en": "Chat",
    "komutlar": [
@@ -1502,7 +1504,7 @@ window.RB_DOCS = {
   },
   {
    "id": "website",
-   "emoji": "\ud83d",
+   "emoji": "🔗",
    "tr": "Site",
    "en": "Website",
    "komutlar": [
@@ -1626,7 +1628,7 @@ window.RB_DOCS = {
   },
   {
    "id": "mee6-roles",
-   "emoji": "ğŸ­",
+   "emoji": "🎭",
    "tr": "Rol Sistemi",
    "en": "Roles",
    "yeni": true,
@@ -1671,7 +1673,7 @@ window.RB_DOCS = {
   },
   {
    "id": "mee6-levels",
-   "emoji": "ğŸ“ˆ",
+   "emoji": "📈",
    "tr": "Seviye & XP",
    "en": "Levels & XP",
    "yeni": true,
@@ -1698,7 +1700,7 @@ window.RB_DOCS = {
   },
   {
    "id": "mee6-ticket",
-   "emoji": "ğŸŸï¸",
+   "emoji": "🎟️",
    "tr": "Ticket & Transkript",
    "en": "Tickets & Transcripts",
    "yeni": true,
@@ -1725,7 +1727,7 @@ window.RB_DOCS = {
   },
   {
    "id": "mee6-auto",
-   "emoji": "âš™ï¸",
+   "emoji": "⚙️",
    "tr": "Otomasyon",
    "en": "Automations",
    "yeni": true,
@@ -1743,7 +1745,7 @@ window.RB_DOCS = {
   },
   {
    "id": "mee6-voice",
-   "emoji": "ğŸ”Š",
+   "emoji": "🔊",
    "tr": "Ses",
    "en": "Voice",
    "yeni": true,
@@ -1761,7 +1763,7 @@ window.RB_DOCS = {
   },
   {
    "id": "mee6-social",
-   "emoji": "ğŸ“£",
+   "emoji": "📣",
    "tr": "Duyuru & Sosyal",
    "en": "Announcements & Social",
    "yeni": true,
@@ -1797,8 +1799,8 @@ window.RB_DOCS = {
   },
   {
    "id": "mee6-bday",
-   "emoji": "ğŸ‚",
-   "tr": "DoÄŸum GÃ¼nÃ¼",
+   "emoji": "🎂",
+   "tr": "Doğum Günü",
    "en": "Birthdays",
    "yeni": true,
    "komutlar": [
@@ -1815,8 +1817,8 @@ window.RB_DOCS = {
   },
   {
    "id": "mee6-counter",
-   "emoji": "ğŸ”¢",
-   "tr": "SayaÃ§",
+   "emoji": "🔢",
+   "tr": "Sayaç",
    "en": "Counter",
    "yeni": true,
    "komutlar": [

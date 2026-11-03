@@ -80,8 +80,9 @@
     ana.innerHTML = "";
     nav.innerHTML = "";
 
-    /* menüde "Tümü" + kategoriler */
-    var tumu = el("button", "doc-nav-link on", "<span>·</span>" + (dil === "en" ? "All commands" : "Tümü"));
+    /* menüde "Tümü" + kategoriler. "·" yerine kategori listesiyle aynı
+       hizada duran ızgara ikonu — tek başına nokta rastgele görünüyordu. */
+    var tumu = el("button", "doc-nav-link on", '<span aria-hidden="true"><svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1.2"/><rect x="9" y="1" width="6" height="6" rx="1.2"/><rect x="1" y="9" width="6" height="6" rx="1.2"/><rect x="9" y="9" width="6" height="6" rx="1.2"/></svg></span>' + (dil === "en" ? "All commands" : "Tümü"));
     tumu.type = "button";
     tumu.dataset.kat = "hepsi";
     nav.appendChild(tumu);

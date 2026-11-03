@@ -2360,8 +2360,8 @@ input,select{font-family:inherit;font-size:inherit}
       } else {
         pic.textContent = name[0].toUpperCase();
       }
-      badge.className = 'acct-badge' + (pre.staff ? ' staff' : pre.active ? ' pro' : '');
-      badge.textContent = pre.staff ? 'Yetkili' : pre.active ? 'Premium' : 'Standart';
+      badge.className = 'acct-badge' + (pre.staff ? '∞' : pre.active ? ' pro' : '');
+      badge.textContent = pre.staff ? '∞' : pre.active ? 'Premium' : 'Standart';
     } else {
       $('#acctName').textContent = 'Giriş yapılmadı';
       $('#acctTag').textContent = ACCOUNT.error === 'network'
@@ -2376,10 +2376,10 @@ input,select{font-family:inherit;font-size:inherit}
     $('#acctLogin').style.display = ok ? 'none' : '';
     $('#acctLogout').style.display = ok ? '' : 'none';
 
-    $('#acctPremium').textContent = !ok ? '—' : pre.staff ? 'Yetkili' : pre.active ? 'Aktif' : 'Yok';
+    $('#acctPremium').textContent = !ok ? '—' : pre.staff ? '∞' : pre.active ? 'Aktif' : 'Yok';
     $('#acctDays').textContent = !ok ? '—'
-      : pre.staff ? 'âˆ'
-      : pre.daysLeft === -1 ? 'âˆ'
+      : pre.staff ? '∞'
+      : pre.daysLeft === -1 ? '∞'
       : (pre.daysLeft || 0) + ' gün';
     $('#acctUntil').textContent = pre.paidUntil
       ? new Date(pre.paidUntil).toLocaleDateString('tr-TR')
@@ -2393,7 +2393,7 @@ input,select{font-family:inherit;font-size:inherit}
     const pill = $('#pillAcct');
     pill.classList.toggle('live', ok);
     pill.classList.toggle('dead', !ok && !!ACCOUNT.error);
-    $('#pillAcctTxt').textContent = ok ? (pre.staff ? 'Yetkili' : pre.active ? 'Premium' : 'Bağlı') : 'Bağlı değil';
+    $('#pillAcctTxt').textContent = ok ? (pre.staff ? '∞' : pre.active ? 'Premium' : 'Bağlı') : 'Bağlı değil';
   }
 
   async function accountLogin() {

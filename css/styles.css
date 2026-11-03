@@ -170,9 +170,11 @@ html[data-theme="dark"] .dc-cmd{color:var(--brand-300)}
 
 /* ── özellik kartları ─────────────────────────────────────────────── */
 /* Izgara çizgileriyle ayrılmış tek blok: 3 ayrı kutu yerine referans
-   sitelerdeki gibi bitişik hücreler. Hover'da yalnızca zemin açılır. */
+   sitelerdeki gibi bitişik hücreler. Hover'da yalnızca zemin açılır.
+   Sütun sayısı kart sayısına bölünmeli: 8 kart 3 sütunda son hücreyi
+   boş bırakıyordu (arkadaki gri blok). 4 sütun = iki tam satır. */
 .feat-grid{
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;
   background:var(--line);
   border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;
 }

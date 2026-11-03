@@ -426,6 +426,7 @@ html[data-theme="dark"] .doc-side a.on,
 html[data-theme="dark"] .doc-side .doc-nav-link.on{color:var(--ink)}
 .doc-side .doc-nav-link > span{
   flex:0 0 1.1em;font-size:1em;line-height:1;text-align:center;
+  display:inline-flex;align-items:center;justify-content:center;
 }
 .doc-side a .n,
 .doc-side .doc-nav-link .n{
@@ -571,6 +572,38 @@ html[data-theme="dark"] .cmd-name{color:var(--ink)}
 }
 .cmd-empty[hidden]{display:none}
 
+/* ürünler arası geçiş şeridi: dört hücreli tek blok, tek başlık değil */
+.xlink{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto auto;
+  align-items:center;gap:var(--sp-4);
+  max-width:var(--w-doc);margin:0 auto var(--sp-7);
+  padding:var(--sp-4) var(--sp-5);
+  border:1px solid var(--line);border-radius:var(--r-md);
+  background:var(--surface);
+  text-decoration:none;color:var(--ink);
+  transition:background var(--d-1) var(--t);
+}
+.xlink:hover{background:var(--surface-2)}
+.xlink-k{
+  font-family:var(--mono);font-size:var(--fs-2xs);font-weight:500;
+  color:var(--faint);text-transform:uppercase;letter-spacing:.04em;
+  border:1px solid var(--line);border-radius:4px;padding:2px 7px;
+}
+.xlink-t{font-size:var(--fs-sm);font-weight:600;letter-spacing:-.01em}
+.xlink-d{font-size:var(--fs-xs);color:var(--faint)}
+.xlink-a{
+  display:grid;place-items:center;width:26px;height:26px;
+  border:1px solid var(--line-2);border-radius:50%;
+  font-size:var(--fs-2xs);color:var(--muted);
+  transition:transform var(--d-1) var(--t);
+}
+.xlink:hover .xlink-a{transform:translateX(2px)}
+@media (max-width:760px){
+  .xlink{grid-template-columns:auto minmax(0,1fr) auto;row-gap:6px}
+  .xlink-d{grid-column:1 / -1;order:3}
+}
+
 @media (max-width:900px){
   .doc-layout{grid-template-columns:1fr;padding-top:0}
   .doc-side{
@@ -643,6 +676,7 @@ html[data-theme="dark"] .cmd-name{color:var(--ink)}
 .tl-tag-bot{color:var(--brand-600);border-color:var(--brand-edge);background:var(--brand-soft)}
 html[data-theme="dark"] .tl-tag-bot{color:var(--brand-300)}
 .tl-tag-site{color:var(--ok);border-color:var(--ok-edge);background:var(--ok-soft)}
+.tl-tag-site\+bot{color:var(--ink);border-color:var(--line-2);background:var(--surface-3)}
 .changes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px}
 .change{
   background:var(--surface);

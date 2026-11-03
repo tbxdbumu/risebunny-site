@@ -37,7 +37,10 @@
   --premium-2:#fbbf24;
 
   /* ── TİPOGRAFİ ───────────────────────────────────────────────────── */
-  --font:"Inter","Inter var",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  /* emoji yığını sona eklenir: Windows'ta renkli emoji yoksa
+     "Noto Color Emoji"/"Segoe UI Emoji" devreye girer, aksi halde
+     kategori ikonları boş kutu olarak çiziliyordu. */
+  --font:"Inter","Inter var",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji";
   --mono:ui-monospace,"SFMono-Regular","SF Mono","Cascadia Code",Consolas,monospace;
   /* eski ad: bazı bileşenler --font-mono yazıyordu */
   --font-mono:var(--mono);

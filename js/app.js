@@ -252,7 +252,13 @@
   function t(k) {
     var o = OVR[LANG] && OVR[LANG][k];
     if (o) return o;
-    return I18N_DICT[LANG] && I18N_DICT[LANG][k] || I18N_DICT.en[k] || k;
+    var d = I18N_DICT[LANG] && I18N_DICT[LANG][k];
+    if (d) return d;
+    /* anahtar bulunamazsa ekrana anahtarın adını basma: "discord_login"
+       gibi bir kelimenin kullanıcıya görünmesi tasarımı bozan bir hataydı.
+       Boş döndürürsek mevcut metin yerinde kalır (HTML fallback). */
+    if (I18N_DICT.en[k]) return I18N_DICT.en[k];
+    return null;
   }
   function renderSystems() {
     var grid = $("#sys-grid");
@@ -265,11 +271,10 @@
       grid.textContent = "—";
       return;
     }
-    sorted.forEach(function(f, i) {
+    sorted.forEach(function(f) {
       var li = document.createElement("li");
-      var b = document.createElement("b");
-      b.textContent = "0" + (i + 1);
-      li.appendChild(b);
+      /* numaralı rozet ("01", "02") kaldırıldı: referans sitelerdeki gibi
+         içerik kendi başına konuşsun. */
       var s = document.createElement("span");
       s.textContent = f.title && (f.title[LANG] || f.title.en) || "";
       li.appendChild(s);

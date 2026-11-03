@@ -56,14 +56,18 @@
       nav.parentNode.insertBefore(sp, nav);
     }
     var fs = document.getElementById("rb-discord-slot");
-    if (fs) fs.innerHTML = s.ok ? '<a href="/risebunny#hesabim" class="rb-dbtn" title="Hesabım"><img src="' + s.user.avatar + '" alt=""><span>' + s.user.username.replace(/[<>&"]/g, "") + (s.user.premium ? ' <span class="rb-premium-badge-inline">Premium</span>' : "") + "</span></a>" : '<a href="/api/auth/discord/start?next=' + encodeURIComponent(next) + '" class="rb-dbtn" title="Discord ile giriş"><i class="fa-brands fa-discord"></i><span data-i18n="tr">Discord</span><span data-i18n="en">Discord</span></a>';
+    if (fs) fs.innerHTML = s.ok ? '<a href="/risebunny#hesabim" class="rb-dbtn" title="Hesabım"><img src="' + s.user.avatar + '" alt=""><span>' + s.user.username.replace(/[<>&"]/g, "") + (s.user.premium ? ' <span class="rb-premium-badge-inline">Premium</span>' : "") + "</span></a>" : '<a href="/api/auth/discord/start?next=' + encodeURIComponent(next) + '" class="rb-dbtn" title="Discord" aria-label="Discord"><i class="fa-brands fa-discord" aria-hidden="true"></i></a>';
     if (document.getElementById("rb-nav-user")) {
       $all("a.rb-loginbtn").forEach(function(b) {
         if (s.ok) {
           b.style.display = "none";
         } else {
           b.setAttribute("href", "/api/auth/discord/start?next=" + encodeURIComponent(next));
-          b.innerHTML = '<i class="fa-brands fa-discord"></i><span data-i18n="tr">Discord ile Giriş</span><span data-i18n="en">Login with Discord</span>';
+          /* app.js çeviriyi bu öznitelikten okuyor; "tr"/"en" değerleri
+             anahtar sanılıp ekrana basılıyordu. Tek düğüm, iki dilli metin. */
+          b.innerHTML = '<i class="fa-brands fa-discord" aria-hidden="true"></i><span class="rb-lbl"></span>';
+          var lbl = b.querySelector(".rb-lbl");
+          if (lbl) lbl.textContent = (localStorage.getItem("rb-lang") || "tr") === "en" ? "Login with Discord" : "Discord ile Giriş";
         }
       });
     }
@@ -83,12 +87,9 @@
       if (isTr) b.classList.toggle("active", cur === "tr");
       if (isEn) b.classList.toggle("active", cur === "en");
     });
-    $all("[data-i18n]").forEach(function(el) {
-      var v = el.dataset.i18n;
-      if (v === "tr" || v === "en") {
-        el.style.display = v === cur ? "inline" : "none";
-      }
-    });
+    /* data-i18n artık app.js'in çeviri sözlüğü anahtarı. Eski "hangi dil"
+       işareti data-i18n="tr"/"en" ise burada değil, ayrı öznitelikte tutulur;
+       aksi halde iki sistem birbirinin metnini eziyordu. */
     $all("[data-i18n-block]").forEach(function(el) {
       var v = el.dataset.i18nBlock;
       if (v === "tr" || v === "en") {

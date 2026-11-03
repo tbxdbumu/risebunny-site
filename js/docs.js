@@ -58,7 +58,18 @@
 
     var sol = el("div", "cmd-left");
     sol.appendChild(el("code", "cmd-name", kacis(ad)));
-    if (kullanim && kullanim !== ad) sol.appendChild(el("span", "cmd-use", kacis(kullanim)));
+    if (kullanim && kullanim !== ad) {
+      /* Uzun kullanım zincirleri (ör. r!not add … | list | delete …) satırı
+         3 satıra çıkarıp listeyi seyrekleştiriyordu. Kısa hâli görünür,
+         tamamı title'da duruyor. */
+      var kisa = kullanim;
+      var parcalar = kullanim.split(/\s+\|\s+/);
+      if (parcalar.length > 2) kisa = parcalar.slice(0, 2).join(" | ") + " …";
+      if (kisa.length > 34) kisa = kisa.slice(0, 33).replace(/\s+\S*$/, "") + "…";
+      var kSpan = el("span", "cmd-use", kacis(kisa));
+      kSpan.title = kullanim;
+      sol.appendChild(kSpan);
+    }
     satir.appendChild(sol);
     satir.appendChild(el("p", "cmd-desc", kacis(aciklama)));
     return satir;

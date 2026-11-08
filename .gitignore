@@ -1,8 +1,20 @@
 .vercel
 .env*
 
-# geçici üretim/analiz çýktýlarý
+# geÃ§ici Ã¼retim/analiz Ã§Ä±ktÄ±larÄ±
 _docs-data.json
 *.bak-mojibake
 *.yedek.*
 
+
+# --- SIRLAR: asla commit edilmesin (2026-11-08 eklendi) ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*service-account*.json
+*service-account*.txt
+FIREBASE_SERVICE_ACCOUNT*.txt
+**/credentials.json
+.vercel

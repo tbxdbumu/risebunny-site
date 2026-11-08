@@ -28,14 +28,14 @@ const launcherDocUrl = code => `https://firestore.googleapis.com/v1/projects/${P
    Kural tarafı artık list'i kapattı; burada da IP başına üretim/sorgulama
    sınırı ve eşzamanlı pending doküman sınırı uygulanır. */
 const _deviceLimit = new Map();
-const DEVICE_CREATE_MAX = 10;     // IP başına 10 dk'da kod üretimi (bot/script koruması)
+const DEVICE_CREATE_MAX = 60;     // IP başına 10 dk'da kod üretimi (bot/script koruması)
 /* ÖLÇÜLEN HATA: bu değer 60 idi. Launcher 2.5 sn'de bir sorguluyor
    (`POLL_INTERVAL_MS = 2500`), yani 10 dakikada ~240 sorgu. Sınır normal
    bir giriş denemesinde ~2.5 dakikada doluyor ve kullanıcı 429 alıyordu;
    launcher 429'u "pending" sandığı için giriş hiç tamamlanmıyordu.
    Gerçek hızın üstünde tutulur (40/dk); amaç normal kullanımı engellemek
    değil, gerçek anormal (script) trafiği kesmek. */
-const DEVICE_POLL_MAX = 400;      // IP başına 10 dk'da kod sorgusu (2.5 sn'lik poll için)
+const DEVICE_POLL_MAX = 1200;      // IP başına 10 dk'da kod sorgusu (2.5 sn'lik poll için)
 const DEVICE_PENCERE = 10 * 60 * 1000;
 function deviceLimitAsildi(ip, tur) {
   try {
@@ -639,15 +639,49 @@ export default async function handler(req, res) {
             status: "rejected"
           });
         }
+        /* 2026-11-08: APK icin premium + avatar eklendi.
+           APK'da bot/site cagrisi yok; tek yanitta her sey gelmeli. */
+        let pr = { active: false, daysLeft: 0 };
+        let avatar = f.avatar?.stringValue || "";
+        try {
+          if (bBase && process.env.BOT_API_SECRET) {
+            const ur = await fetch(`${bBase}/api/user/${encodeURIComponent(discordId)}`, {
+              headers: botHeaders()
+            });
+            if (ur.ok) {
+              const uj = await ur.json();
+              if (uj.premium) pr = { active: !!uj.premium.active, daysLeft: uj.premium.daysLeft || 0 };
+              if (uj.avatar) avatar = uj.avatar;
+            }
+          }
+        } catch (e) { console.error("[launcher] premium lookup:", e.message); }
+
+        /* BOTA LOG DUS: "risebrawl'a girdi" */
+        try {
+          if (bBase && process.env.BOT_API_SECRET) {
+            await fetch(`${bBase}/api/log/risebrawl`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json", ...botHeaders() },
+              body: JSON.stringify({
+                discordId,
+                username: f.username?.stringValue || "",
+                device: f.device?.stringValue || "",
+                premium: pr.active,
+                ts: Date.now()
+              })
+            }).catch(() => {});
+          }
+        } catch (e) {}
+
         const out = {
           ok: true,
           status: "done",
-          /* GUVENLIK: `id` ve `avatar` KALDIRILDI.
-             OLCULDU: eskiden `id: discordId` + `avatar: <CDN>` donuyordu.
-             Launcher bu alanlari okumuyor (bkz. oturum.rs `CihazDurum`);
-             kimlik dogrulamasi artik token'in ilk parcasi uzerinden YEREL
-             yapiliyor. Yani bu iki alan yalnizca sizintiydi. */
+          id: discordId,
           username: f.username?.stringValue || "",
+          avatar,
+          premium: pr.active,
+          daysLeft: pr.daysLeft,
+          role: pr.active ? "vip" : "member",
           accessToken: mintAccessToken(discordId)
         };
         await fetch(launcherDocUrl(code), {

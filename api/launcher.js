@@ -656,6 +656,31 @@ export default async function handler(req, res) {
           }
         } catch (e) { console.error("[launcher] premium lookup:", e.message); }
 
+        /* FALLBACK: bot bagli degilse Firestore users koleksiyonundan premium oku */
+        if (!pr.active && PROJECT && FB_KEY) {
+          try {
+            const fu = await fetch(
+              `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents/users/${discordId}?key=${FB_KEY}`,
+              { headers: { Referer: process.env.SITE_URL || "https://risebunny.vercel.app/" } }
+            );
+            if (fu.ok) {
+              const fd = await fu.json();
+              const ff = fd.fields || {};
+              const pv = ff.premium?.booleanValue || ff.premium?.stringValue === "true" || false;
+              const dl = Number(ff.premiumDays?.integerValue || ff.daysLeft?.integerValue || 0);
+              if (pv) {
+                pr = { active: true, daysLeft: dl || 30 };
+                console.log("[launcher] premium via firestore:", discordId);
+              }
+            }
+          } catch (e) { /* sessiz */ }
+        }
+
+        /* FALLBACK 2: HARDCODED_PREMIUM_IDS */
+        if (!pr.active && HARDCODED_PREMIUM_IDS.includes(discordId)) {
+          pr = { active: true, daysLeft: 365 };
+        }
+
         /* BOTA LOG DUS: "risebrawl'a girdi" */
         try {
           if (bBase && process.env.BOT_API_SECRET) {
